@@ -34,7 +34,7 @@
     "ts-loader": "^2.3.7",
     "tsconfig-paths-webpack-plugin": "^2.0.0",
     "tslint": "^5.7.0",
-    "tslint-config-prettier": "^1.10.0",
+    "tslint-config-prettier": "^1.14.0",
     "tslint-react": "^3.2.0",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "0.6.2",
@@ -53,6 +53,9 @@
     "@types/node": "^10.5.2",
     "@types/react": "^16.4.6",
     "@types/react-dom": "^16.0.6",
+    "node-sass": "^4.9.2",
+    "prettier": "^1.13.7",
+    "sass-loader": "^7.0.3",
     "typescript": "^2.9.2"
   },
   "jest": {
