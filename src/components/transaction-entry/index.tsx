@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Row, Input, Col, Button, InputGroup } from 'reactstrap';
+import { Input, Button, InputGroup, Row, Col } from 'reactstrap';
+
 import { prettifyPrice } from '../../utils/string';
 
 export type TransactionType = 'outcome' | 'income';
@@ -53,30 +54,24 @@ class Transaction extends React.Component<
 
   render() {
     return (
-      <Row className="mt-2">
+      <InputGroup className="my-2 mx-0 row no-gutters">
+        <Col className="input-group-prepend" xs="auto">
+          <Button
+            disabled={this.state.type === 'outcome'}
+            onClick={this.onTypeChange('outcome')}
+            color="danger">
+            -
+          </Button>
+          <Button
+            disabled={this.state.type === 'income'}
+            onClick={this.onTypeChange('income')}
+            color="success">
+            +
+          </Button>
+        </Col>
         <Col>
-          <InputGroup className="mb-2">
-            <div className="input-group-prepend">
-              <Button
-                className={classNames({
-                  'color-disabled': this.state.type === 'outcome',
-                })}
-                disabled={this.state.type === 'outcome'}
-                onClick={this.onTypeChange('outcome')}
-                color="danger">
-                -
-              </Button>
-              <Button
-                className={classNames({
-                  'color-disabled': this.state.type === 'income',
-                })}
-                disabled={this.state.type === 'income'}
-                onClick={this.onTypeChange('income')}
-                color="success">
-                +
-              </Button>
-            </div>
-            <div>
+          <Row className="mx-0">
+            <Col className="px-0">
               <Input
                 id="price"
                 className="rounded-0"
@@ -85,8 +80,8 @@ class Transaction extends React.Component<
                 onKeyDown={this.handleKeyDown}
                 onChange={this.onChange}
               />
-            </div>
-            <div className="input-group-append">
+            </Col>
+            <Col className="px-0">
               <Input
                 id="description"
                 className="rounded-0"
@@ -95,19 +90,19 @@ class Transaction extends React.Component<
                 onKeyDown={this.handleKeyDown}
                 onChange={this.onChangeDescription}
               />
-            </div>
-            <div className="input-group-append">
-              <Button
-                className={classNames({ 'text-light': !this.state.value })}
-                color={this.state.value ? 'primary' : 'disabled'}
-                disabled={!this.state.value}
-                onClick={this.handleSubmit}>
-                Submit
-              </Button>
-            </div>
-          </InputGroup>
+            </Col>
+          </Row>
         </Col>
-      </Row>
+        <Col className="input-group-append" xs="auto">
+          <Button
+            className={classNames({ 'text-light': !this.state.value })}
+            color={this.state.value ? 'primary' : 'disabled'}
+            disabled={!this.state.value}
+            onClick={this.handleSubmit}>
+            Submit
+          </Button>
+        </Col>
+      </InputGroup>
     );
   }
 }

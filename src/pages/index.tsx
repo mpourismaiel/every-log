@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import * as FileSaver from 'file-saver';
+import { Container, Row, Col, Button } from 'reactstrap';
 
 import { IDictionary } from '../types';
 import Transaction from '../components/transaction';
@@ -9,6 +10,7 @@ import TransactionEntry, {
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { prettifyPrice } from '../utils/string';
+import { formatDate } from '../utils/date';
 
 export interface ITransaction {
   description: string;
@@ -25,10 +27,44 @@ class Index extends React.Component<{}, IIndexState> {
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
   };
 
+  private fileInput: HTMLInputElement;
+
   saveToStorage = () => {
     const { transactions } = this.state;
     const data = JSON.stringify(transactions);
     localStorage.setItem('transactions', data);
+  };
+
+  handleExport = e => {
+    e.preventDefault();
+    FileSaver.saveAs(
+      new Blob([JSON.stringify(this.state.transactions)]),
+      `${formatDate(new Date(), 'every-log-%y-%mm-%d_%H-%M.json')}`,
+    );
+  };
+
+  handleImport = e => {
+    if (!e.target.files[0]) {
+      return;
+    }
+
+    const fileReader = new FileReader();
+    fileReader.onloadend = () => {
+      try {
+        this.setState(
+          { transactions: JSON.parse(fileReader.result) },
+          this.saveToStorage,
+        );
+        alert('Your data has been imported successfully');
+      } catch (err) {
+        alert(
+          'You need to import a JSON file exported from EveryLog or a JSON file compatible with our format',
+        );
+      }
+      this.fileInput.value = '';
+    };
+
+    fileReader.readAsText(e.target.files[0]);
   };
 
   handleSubmit = ({
@@ -94,7 +130,9 @@ class Index extends React.Component<{}, IIndexState> {
       <Container>
         <Row>
           <Col className="mt-2" xs="7">
-            <h3 className="text-secondary">Transactions</h3>
+            <Row className="mx-0">
+              <h3 className="text-secondary">Transactions</h3>
+            </Row>
             {Object.keys(this.state.transactions).map(key => (
               <Transaction
                 key={key}
@@ -117,6 +155,25 @@ class Index extends React.Component<{}, IIndexState> {
               </Row>
             )}
             <TransactionEntry onSubmit={this.handleSubmit} />
+            <Row className="mx-0">
+              <Col xs="auto" className="pl-0">
+                <Button color="info" onClick={this.handleExport}>
+                  Export
+                </Button>
+              </Col>
+              <Col>
+                <input
+                  type="file"
+                  id="import-file"
+                  className="custom-file-input"
+                  ref={node => (this.fileInput = node)}
+                  onChange={this.handleImport}
+                />
+                <label className="custom-file-label" htmlFor="import-file">
+                  Choose file to import
+                </label>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Container>
