@@ -8,11 +8,12 @@ import Transaction from '../components/transaction';
 import TransactionEntry, {
   TransactionType,
 } from '../components/transaction-entry';
-import { prettifyPrice } from '../utils/string';
 import { formatDate } from '../utils/date';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.scss';
+import TransactionsSummary from '../components/transactions-summary';
+import ImportExport from '../components/import-export';
 
 export interface ITransaction {
   description: string;
@@ -128,23 +129,6 @@ class Index extends React.Component<{}, IIndexState> {
   handleCollapse = () => this.setState({ exportOpen: !this.state.exportOpen });
 
   render() {
-    const totalTransactions = Object.keys(this.state.transactions).reduce(
-      (tmp, key) => {
-        if (this.state.transactions[key].type === 'outcome') {
-          tmp -= parseInt(
-            this.state.transactions[key].value.replace(/,/g, ''),
-            0,
-          );
-        } else {
-          tmp += parseInt(
-            this.state.transactions[key].value.replace(/,/g, ''),
-            0,
-          );
-        }
-        return tmp;
-      },
-      0,
-    );
     return (
       <Container className="viewport" style={{ height: this.state.height }}>
         <Row
@@ -158,25 +142,11 @@ class Index extends React.Component<{}, IIndexState> {
                 Export/Import
               </Button>
             </Row>
-            <Row className="mx-0 export-import">
-              <Col xs="auto" className="pl-0">
-                <Button color="info" onClick={this.handleExport}>
-                  Export
-                </Button>
-              </Col>
-              <Col>
-                <input
-                  type="file"
-                  id="import-file"
-                  className="custom-file-input"
-                  ref={node => (this.fileInput = node)}
-                  onChange={this.handleImport}
-                />
-                <label className="custom-file-label" htmlFor="import-file">
-                  Choose file to import
-                </label>
-              </Col>
-            </Row>
+            <ImportExport
+              handleExport={this.handleExport}
+              fileInputRef={node => (this.fileInput = node)}
+              handleImport={this.handleImport}
+            />
           </Col>
         </Row>
         <Row className="px-0 scrollable">
@@ -193,19 +163,7 @@ class Index extends React.Component<{}, IIndexState> {
           </Col>
         </Row>
         <Row className="footer">
-          {totalTransactions !== 0 && (
-            <Row className="border-top py-2 mt-1 w-100 mx-0 px-3">
-              <span className="text-secondary mr-2">
-                {totalTransactions > 0 ? 'Remaining:' : 'In debt:'}
-              </span>
-              <b
-                className={classNames('text-secondary', {
-                  'text-success': totalTransactions > 0,
-                })}>
-                {prettifyPrice(totalTransactions)}
-              </b>
-            </Row>
-          )}
+          <TransactionsSummary transactions={this.state.transactions} />
           <TransactionEntry onSubmit={this.handleSubmit} />
         </Row>
       </Container>

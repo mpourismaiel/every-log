@@ -4,7 +4,8 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "member-access": false,
-    "jsx-boolean-value": false
+    "jsx-boolean-value": false,
+    "jsx-no-lambda": false
   },
   "linterOptions": {
     "exclude": [
