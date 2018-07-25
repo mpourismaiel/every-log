@@ -55,7 +55,7 @@ class Transaction extends React.Component<
 
   render() {
     return (
-      <InputGroup className="mx-0 row no-gutters transaction-entry footer">
+      <InputGroup className="mx-0 row no-gutters transaction-entry">
         <Col className="input-group-prepend" xs="auto">
           <Button
             disabled={this.state.type === 'outcome'}

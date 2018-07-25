@@ -21,17 +21,30 @@ export interface ITransaction {
 }
 
 export interface IIndexState {
-  transactions: IDictionary<ITransaction>;
   exportOpen: boolean;
+  height: number;
+  transactions: IDictionary<ITransaction>;
 }
 
 class Index extends React.Component<{}, IIndexState> {
   state: IIndexState = {
     exportOpen: false,
+    height: 600,
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
   };
 
   private fileInput: HTMLInputElement;
+
+  componentDidMount() {
+    window.addEventListener('resize', this.handleResize);
+    this.handleResize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+
+  handleResize = () => this.setState({ height: window.innerHeight });
 
   saveToStorage = () => {
     const { transactions } = this.state;
@@ -133,7 +146,7 @@ class Index extends React.Component<{}, IIndexState> {
       0,
     );
     return (
-      <Container className="viewport">
+      <Container className="viewport" style={{ height: this.state.height }}>
         <Row
           className={classNames('mx-0 header border-bottom', {
             'collapse-open': this.state.exportOpen,
@@ -177,29 +190,24 @@ class Index extends React.Component<{}, IIndexState> {
                 value={this.state.transactions[key].value}
               />
             ))}
-            {totalTransactions !== 0 && (
-              <Row className="border-top py-2 mt-1">
-                <Col
-                  xs={{ size: 4, offset: 1 }}
-                  md={{ size: 3, offset: 1 }}
-                  lg={{ size: 2, offset: 1 }}>
-                  <b
-                    className={classNames('text-secondary', {
-                      'text-success': totalTransactions > 0,
-                    })}>
-                    {prettifyPrice(totalTransactions)}
-                  </b>
-                </Col>
-                <Col>
-                  <span className="text-secondary">
-                    {totalTransactions > 0 ? 'Remaining' : 'In debt'}
-                  </span>
-                </Col>
-              </Row>
-            )}
           </Col>
         </Row>
-        <TransactionEntry onSubmit={this.handleSubmit} />
+        <Row className="footer">
+          {totalTransactions !== 0 && (
+            <Row className="border-top py-2 mt-1 w-100 mx-0 px-3">
+              <span className="text-secondary mr-2">
+                {totalTransactions > 0 ? 'Remaining:' : 'In debt:'}
+              </span>
+              <b
+                className={classNames('text-secondary', {
+                  'text-success': totalTransactions > 0,
+                })}>
+                {prettifyPrice(totalTransactions)}
+              </b>
+            </Row>
+          )}
+          <TransactionEntry onSubmit={this.handleSubmit} />
+        </Row>
       </Container>
     );
   }
