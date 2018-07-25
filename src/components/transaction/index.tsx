@@ -19,13 +19,13 @@ class Transaction extends React.PureComponent<ITransactionProps> {
         <Col xs="1">
           <Trash2 color="red" onClick={this.props.onDelete} />
         </Col>
-        <Col xs="2">
+        <Col xs="4" md="3" lg="2">
           <b
             className={classNames({
               'text-dark': this.props.type === 'outcome',
               'text-success': this.props.type === 'income',
             })}>
-            {(this.props.type === 'income' ? '+' : '-') + this.props.value}
+            {(this.props.type === 'income' ? '+' : '') + this.props.value}
           </b>
         </Col>
         <Col>

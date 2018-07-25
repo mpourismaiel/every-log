@@ -1,0 +1,20 @@
+@import '../../assets/scss/_mixins.scss';
+
+.transaction-entry {
+  margin: 0.5rem 0;
+  @include breakpoint-sm {
+    padding: 0 !important;
+    margin: 0;
+
+    * {
+      height: 48px;
+      border-radius: 0 !important;
+    }
+  }
+
+  input {
+    &:first-of-type {
+      border-right: none;
+    }
+  }
+}

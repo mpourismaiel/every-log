@@ -1,0 +1,5 @@
+@mixin breakpoint-sm() {
+  @media screen and (max-width: 575.8px) {
+    @content;
+  }
+}

@@ -1,0 +1,43 @@
+@import './assets/scss/_mixins.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  overflow: hidden;
+
+  #root {
+    overflow: hidden;
+  }
+}
+
+.viewport {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+
+  @include breakpoint-sm {
+    padding: 0;
+
+    > .row {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+
+  .scrollable {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+  }
+
+  .header {
+    order: 0;
+  }
+
+  .footer {
+    order: 999;
+  }
+}

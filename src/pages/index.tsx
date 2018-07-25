@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as FileSaver from 'file-saver';
+import classNames from 'classnames';
 import { Container, Row, Col, Button } from 'reactstrap';
 
 import { IDictionary } from '../types';
@@ -7,10 +8,11 @@ import Transaction from '../components/transaction';
 import TransactionEntry, {
   TransactionType,
 } from '../components/transaction-entry';
-
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { prettifyPrice } from '../utils/string';
 import { formatDate } from '../utils/date';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles.scss';
 
 export interface ITransaction {
   description: string;
@@ -20,10 +22,12 @@ export interface ITransaction {
 
 export interface IIndexState {
   transactions: IDictionary<ITransaction>;
+  exportOpen: boolean;
 }
 
 class Index extends React.Component<{}, IIndexState> {
   state: IIndexState = {
+    exportOpen: false,
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
   };
 
@@ -108,6 +112,8 @@ class Index extends React.Component<{}, IIndexState> {
     );
   };
 
+  handleCollapse = () => this.setState({ exportOpen: !this.state.exportOpen });
+
   render() {
     const totalTransactions = Object.keys(this.state.transactions).reduce(
       (tmp, key) => {
@@ -127,35 +133,19 @@ class Index extends React.Component<{}, IIndexState> {
       0,
     );
     return (
-      <Container>
-        <Row>
-          <Col className="mt-2" xs="7">
-            <Row className="mx-0">
+      <Container className="viewport">
+        <Row
+          className={classNames('mx-0 header border-bottom', {
+            'collapse-open': this.state.exportOpen,
+          })}>
+          <Col className="px-0">
+            <Row className="mx-0 justify-content-between">
               <h3 className="text-secondary">Transactions</h3>
+              <Button outline color="info" onClick={this.handleCollapse}>
+                Export/Import
+              </Button>
             </Row>
-            {Object.keys(this.state.transactions).map(key => (
-              <Transaction
-                key={key}
-                description={this.state.transactions[key].description}
-                onDelete={this.handleDelete(key)}
-                type={this.state.transactions[key].type}
-                value={this.state.transactions[key].value}
-              />
-            ))}
-            {totalTransactions !== 0 && (
-              <Row className="border-top pt-1 mt-1">
-                <Col xs={{ size: '2', offset: 1 }}>
-                  <b className="text-secondary">
-                    {prettifyPrice(totalTransactions)}
-                  </b>
-                </Col>
-                <Col>
-                  <span className="text-secondary">Remaining</span>
-                </Col>
-              </Row>
-            )}
-            <TransactionEntry onSubmit={this.handleSubmit} />
-            <Row className="mx-0">
+            <Row className="mx-0 export-import">
               <Col xs="auto" className="pl-0">
                 <Button color="info" onClick={this.handleExport}>
                   Export
@@ -176,6 +166,40 @@ class Index extends React.Component<{}, IIndexState> {
             </Row>
           </Col>
         </Row>
+        <Row className="px-0 scrollable">
+          <Col>
+            {Object.keys(this.state.transactions).map(key => (
+              <Transaction
+                key={key}
+                description={this.state.transactions[key].description}
+                onDelete={this.handleDelete(key)}
+                type={this.state.transactions[key].type}
+                value={this.state.transactions[key].value}
+              />
+            ))}
+            {totalTransactions !== 0 && (
+              <Row className="border-top py-2 mt-1">
+                <Col
+                  xs={{ size: 4, offset: 1 }}
+                  md={{ size: 3, offset: 1 }}
+                  lg={{ size: 2, offset: 1 }}>
+                  <b
+                    className={classNames('text-secondary', {
+                      'text-success': totalTransactions > 0,
+                    })}>
+                    {prettifyPrice(totalTransactions)}
+                  </b>
+                </Col>
+                <Col>
+                  <span className="text-secondary">
+                    {totalTransactions > 0 ? 'Remaining' : 'In debt'}
+                  </span>
+                </Col>
+              </Row>
+            )}
+          </Col>
+        </Row>
+        <TransactionEntry onSubmit={this.handleSubmit} />
       </Container>
     );
   }

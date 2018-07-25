@@ -3,6 +3,7 @@ import * as classNames from 'classnames';
 import { Input, Button, InputGroup, Row, Col } from 'reactstrap';
 
 import { prettifyPrice } from '../../utils/string';
+import './styles.scss';
 
 export type TransactionType = 'outcome' | 'income';
 
@@ -54,7 +55,7 @@ class Transaction extends React.Component<
 
   render() {
     return (
-      <InputGroup className="my-2 mx-0 row no-gutters">
+      <InputGroup className="mx-0 row no-gutters transaction-entry footer">
         <Col className="input-group-prepend" xs="auto">
           <Button
             disabled={this.state.type === 'outcome'}
