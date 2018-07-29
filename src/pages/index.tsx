@@ -33,7 +33,7 @@ class Index extends React.Component<{}, IIndexState> {
     exportOpen: false,
     height: 600,
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
-    showAddTransaction: true,
+    showAddTransaction: false,
   };
 
   private fileInput: HTMLInputElement;
