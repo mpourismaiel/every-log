@@ -13,6 +13,8 @@ import {
   Send,
   Package,
   Paperclip,
+  Plus,
+  Minus,
 } from 'react-feather';
 
 import { prettifyPrice } from '../../utils/string';
@@ -87,6 +89,11 @@ class TransactionEntry extends React.Component<
 
     this.setState({ [key]: value } as any);
   };
+
+  switchType = () =>
+    this.setState({
+      type: this.state.type === 'income' ? 'outcome' : 'income',
+    });
 
   renderNumbers(...numbers) {
     return numbers.map(n => (
@@ -173,9 +180,16 @@ class TransactionEntry extends React.Component<
             </Col>
           </Row>
           <Row className="justify-content-center align-items-center price-input position-relative">
-            <span className="py-0 pb-2 text-center">
+            <Row className="mx-0 py-0 pb-2 text-center">
+              <div
+                className={classNames('sign-container', {
+                  'show-income': this.state.type === 'income',
+                })}>
+                <Plus className="sign income" color="#fff" />
+                <Minus className="sign outcome" color="#fff" />
+              </div>
               {prettifyPrice(this.state.price) || '0'}
-            </span>
+            </Row>
             <div
               className={classNames('position-absolute backspace', {
                 show: !!this.state.price,
@@ -189,9 +203,16 @@ class TransactionEntry extends React.Component<
             <Row>{this.renderNumbers(4, 5, 6)}</Row>
             <Row>{this.renderNumbers(7, 8, 9)}</Row>
             <Row>
-              <Col className="number text-center text-white p-2 m-2" />
+              <Col
+                className={classNames(
+                  'number sign text-center text-white p-2 m-2',
+                  { active: this.state.type === 'income' },
+                )}
+                onClick={this.switchType}>
+                <Plus color="#fff" />
+              </Col>
               {this.renderNumbers(0)}
-              <Col className="number text-center text-white p-2 m-2">
+              <Col className="number sign text-center text-white p-2 m-2">
                 <Check color="#fff" />
               </Col>
             </Row>

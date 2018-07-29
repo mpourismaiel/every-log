@@ -38,10 +38,51 @@
     font-size: 32px;
     letter-spacing: 5px;
     font-weight: bold;
+
+    .sign-container {
+      display: flex;
+      flex-direction: column;
+      margin: -7px 5px 0 0;
+      width: 32px;
+      overflow: hidden;
+
+      .sign {
+        transition: all 0.2s ease-out;
+      }
+
+      .income {
+        transform: translateY(-36px);
+      }
+
+      .outcome {
+        transform: translateY(-6px);
+      }
+
+      &.show-income {
+        .income {
+          transform: translateY(18px);
+        }
+
+        .outcome {
+          transform: translateY(36px);
+        }
+      }
+    }
   }
 
   .number {
     font-size: 26px;
+    border-radius: 5px;
+    transition: all 0.2s ease-out;
+    background-color: rgba(255, 255, 255, 0);
+
+    &.sign-container {
+      margin-top: -7px;
+    }
+
+    &:hover, &.active {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
   }
 
   .category {
@@ -52,6 +93,10 @@
     padding: 0;
     justify-content: center;
     align-items: center;
+
+    svg {
+      transition: all 0.2s ease-out;
+    }
 
     &.active {
       svg {
