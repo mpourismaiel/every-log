@@ -1,4 +1,7 @@
 @import './assets/scss/_mixins.scss';
+$primary: #E84670;
+$secondary: #452241;
+@import 'bootstrap/scss/bootstrap.scss';
 
 body {
   margin: 0;
@@ -39,5 +42,23 @@ body {
 
   .footer {
     order: 999;
+  }
+}
+
+.overlay {
+  opacity: 0;
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease-out;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
   }
 }

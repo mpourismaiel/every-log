@@ -2,7 +2,7 @@ export const prettifyPrice = (price: number | string) =>
   price
     .toString()
     .replace(/,/g, '')
-    .replace(/^(0|۰)/g, '')
+    .replace(/^(0|۰)*/g, '')
     .replace(/[^0-9۰۱۲۳۴۵۶۷۸۹]/g, '')
     .split('')
     .reverse()

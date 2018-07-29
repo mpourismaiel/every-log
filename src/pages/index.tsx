@@ -10,10 +10,10 @@ import TransactionEntry, {
 } from '../components/transaction-entry';
 import { formatDate } from '../utils/date';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.scss';
 import TransactionsSummary from '../components/transactions-summary';
 import ImportExport from '../components/import-export';
+import { PlusCircle } from 'react-feather';
 
 export interface ITransaction {
   description: string;
@@ -25,6 +25,7 @@ export interface IIndexState {
   exportOpen: boolean;
   height: number;
   transactions: IDictionary<ITransaction>;
+  showAddTransaction: boolean;
 }
 
 class Index extends React.Component<{}, IIndexState> {
@@ -32,6 +33,7 @@ class Index extends React.Component<{}, IIndexState> {
     exportOpen: false,
     height: 600,
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
+    showAddTransaction: false,
   };
 
   private fileInput: HTMLInputElement;
@@ -164,7 +166,22 @@ class Index extends React.Component<{}, IIndexState> {
         </Row>
         <Row className="footer">
           <TransactionsSummary transactions={this.state.transactions} />
-          <TransactionEntry onSubmit={this.handleSubmit} />
+          <Button
+            color="primary"
+            className="transaction-add w-100 rounded-0 py-3"
+            onClick={() => this.setState({ showAddTransaction: true })}>
+            <PlusCircle />
+          </Button>
+          <div
+            className={classNames('overlay', {
+              show: this.state.showAddTransaction,
+            })}
+            onClick={() => this.setState({ showAddTransaction: false })}
+          />
+          <TransactionEntry
+            show={this.state.showAddTransaction}
+            onSubmit={this.handleSubmit}
+          />
         </Row>
       </Container>
     );

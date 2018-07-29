@@ -2,19 +2,45 @@
 
 .transaction-entry {
   margin: 0.5rem 0;
-  @include breakpoint-sm {
-    padding: 0 !important;
-    margin: 0;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 0;
+  background: linear-gradient(#D85D5F 0%, #E84670 100%);
+  box-shadow: 0 0 30px rgba(216, 93, 95, 0.7);
+  transition: all 0.2s ease-out;
+  z-index: 1100;
 
-    * {
-      height: 48px;
-      border-radius: 0 !important;
+  &.show {
+    height: 60vh;
+  }
+
+  &.expand {
+    height: 100vh;
+  }
+
+  .backspace {
+    right: 0;
+    top: 21px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-out;
+
+    &.show {
+      right: 32px;
+      opacity: 1;
+      visibility: visible;
     }
   }
 
-  input {
-    &:first-of-type {
-      border-right: none;
-    }
+  .price-input {
+    color: #F4F4F4;
+    font-size: 32px;
+    letter-spacing: 5px;
+    font-weight: bold;
+  }
+
+  .number {
+    font-size: 26px;
   }
 }
