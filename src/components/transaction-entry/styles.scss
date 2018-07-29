@@ -12,7 +12,7 @@
   z-index: 1100;
 
   &.show {
-    height: 60vh;
+    height: 440px;
   }
 
   &.expand {
@@ -21,7 +21,7 @@
 
   .backspace {
     right: 0;
-    top: 21px;
+    top: 0;
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease-out;
@@ -42,5 +42,21 @@
 
   .number {
     font-size: 26px;
+  }
+
+  .category {
+    width: 64px;
+    height: 64px;
+    flex: 0 0 64px;
+    display: flex;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+
+    &.active {
+      svg {
+        stroke: #452241;
+      }
+    }
   }
 }
