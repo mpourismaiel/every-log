@@ -37,6 +37,8 @@ const TransactionsSummary: React.SFC<ITransactionsSummaryProps> = ({
       </Row>
     );
   }
+
+  return null;
 };
 
 export default TransactionsSummary;

@@ -109,6 +109,7 @@ class Index extends React.Component<{}, IIndexState> {
             value,
           },
         },
+        showAddTransaction: false,
       },
       this.saveToStorage,
     );

@@ -62,9 +62,9 @@ class TransactionEntry extends React.Component<
 
   handleSubmit = e => {
     e.preventDefault();
-    const { description, type, price } = this.state;
-    this.props.onSubmit({ description, type, value: price });
-    this.setState({ description: '', price: '', type: 'outcome' });
+    const { category, type, price } = this.state;
+    this.props.onSubmit({ description: category, type, value: price });
+    this.setState({ category: 'Twitter', price: '', type: 'outcome' });
   };
 
   handleKeyDown = e => {
@@ -212,7 +212,9 @@ class TransactionEntry extends React.Component<
                 <Plus color="#fff" />
               </Col>
               {this.renderNumbers(0)}
-              <Col className="number sign text-center text-white p-2 m-2">
+              <Col
+                className="number sign text-center text-white p-2 m-2"
+                onClick={this.handleSubmit}>
                 <Check color="#fff" />
               </Col>
             </Row>

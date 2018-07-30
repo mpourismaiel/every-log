@@ -4,6 +4,7 @@ import { Row, Col } from 'reactstrap';
 import { Trash2 } from 'react-feather';
 
 import { TransactionType } from '../transaction-entry';
+import { prettifyPrice } from '../../utils/string';
 
 export interface ITransactionProps {
   description: string;
@@ -25,7 +26,8 @@ class Transaction extends React.PureComponent<ITransactionProps> {
               'text-dark': this.props.type === 'outcome',
               'text-success': this.props.type === 'income',
             })}>
-            {(this.props.type === 'income' ? '+' : '') + this.props.value}
+            {(this.props.type === 'income' ? '+' : '') +
+              prettifyPrice(this.props.value)}
           </b>
         </Col>
         <Col>
