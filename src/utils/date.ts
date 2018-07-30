@@ -1,8 +1,19 @@
+const daysOfWeek = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+];
+
 export const formatDate = (date: Date, format: string) => {
   return format
+    .replace(/%dd/g, daysOfWeek[date.getDay()])
     .replace(/%d/g, date.getDate().toString())
     .replace(
-      /%dd/g,
+      /%0d/g,
       date.getDate().toString().length === 1
         ? '0' + date.getDate()
         : date.getDate().toString(),

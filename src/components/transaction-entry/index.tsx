@@ -19,18 +19,13 @@ import {
 
 import { prettifyPrice } from '../../utils/string';
 import './styles.scss';
+import { ITransaction } from '../../pages';
 
 export type TransactionType = 'outcome' | 'income';
 
 export interface ITransactionEntryProps {
   show: boolean;
-  onSubmit: (
-    data: {
-      description: string;
-      type: TransactionType;
-      value: string;
-    },
-  ) => void;
+  onSubmit: (data: ITransaction) => void;
 }
 
 export interface ITransactionEntryState {
@@ -57,13 +52,16 @@ class TransactionEntry extends React.Component<
 
   componentDidMount() {
     this.node.focus();
-    (window as any).asdf = this.node;
   }
 
   handleSubmit = e => {
     e.preventDefault();
     const { category, type, price } = this.state;
-    this.props.onSubmit({ description: category, type, value: price });
+    this.props.onSubmit({
+      category,
+      type,
+      price: parseInt(price.toString().replace(/,/g, ''), 10),
+    });
     this.setState({ category: 'Twitter', price: '', type: 'outcome' });
   };
 

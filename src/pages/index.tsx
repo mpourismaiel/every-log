@@ -1,11 +1,18 @@
 import * as React from 'react';
 import * as FileSaver from 'file-saver';
 import classNames from 'classnames';
-import { Container, Row, Col, Button } from 'reactstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  CardTitle,
+  CardBody,
+} from 'reactstrap';
 import { PlusCircle } from 'react-feather';
 
 import { IDictionary } from '../types';
-import Transaction from '../components/transaction';
 import TransactionEntry, {
   TransactionType,
 } from '../components/transaction-entry';
@@ -13,16 +20,21 @@ import { formatDate } from '../utils/date';
 import TransactionsSummary from '../components/transactions-summary';
 import Header from '../components/header';
 import './styles.scss';
+import Transaction from '../components/transaction';
+import { prettifyPrice } from '../utils/string';
 
 export interface ITransaction {
-  description: string;
+  category: string;
+  date?: number;
+  description?: string;
   type: TransactionType;
-  value: string;
+  price: number;
 }
 
 export interface IIndexState {
   exportOpen: boolean;
   height: number;
+  transactionActions: string;
   transactions: IDictionary<ITransaction>;
   showAddTransaction: boolean;
 }
@@ -32,6 +44,7 @@ class Index extends React.Component<{}, IIndexState> {
     exportOpen: false,
     height: 600,
     transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
+    transactionActions: null,
     showAddTransaction: false,
   };
 
@@ -86,26 +99,18 @@ class Index extends React.Component<{}, IIndexState> {
     fileReader.readAsText(e.target.files[0]);
   };
 
-  handleSubmit = ({
-    description,
-    type,
-    value,
-  }: {
-    description: string;
-    type: TransactionType;
-    value: string;
-  }) => {
-    if (!value) {
+  handleSubmit = (data: ITransaction) => {
+    if (!data.price) {
       return;
     }
+
     this.setState(
       {
         transactions: {
           ...this.state.transactions,
           [Object.keys(this.state.transactions).length]: {
-            description,
-            type,
-            value,
+            ...data,
+            date: Date.now(),
           },
         },
         showAddTransaction: false,
@@ -128,7 +133,41 @@ class Index extends React.Component<{}, IIndexState> {
     );
   };
 
+  handleTypeToggle = (key: string) => () => {
+    this.setState(
+      {
+        transactions: {
+          ...this.state.transactions,
+          [key]: {
+            ...this.state.transactions[key],
+            type:
+              this.state.transactions[key].type === 'income'
+                ? 'outcome'
+                : 'income',
+          },
+        },
+      },
+      this.saveToStorage,
+    );
+  };
+
+  handleActionsToggle = key => () =>
+    this.setState({
+      transactionActions: this.state.transactionActions === key ? null : key,
+    });
+
   render() {
+    const { transactions } = this.state;
+    const transactionSummary = Object.keys(transactions).reduce(
+      (tmp, key) => {
+        tmp[transactions[key].type] += transactions[key].price;
+        return tmp;
+      },
+      { income: 0, outcome: 0 },
+    );
+    const totalTransactions =
+      transactionSummary.income - transactionSummary.outcome;
+
     return (
       <Container className="viewport" style={{ height: this.state.height }}>
         <Header
@@ -138,19 +177,36 @@ class Index extends React.Component<{}, IIndexState> {
         />
         <Row className="px-0 scrollable">
           <Col>
-            {Object.keys(this.state.transactions).map(key => (
+            <TransactionsSummary totalTransactions={totalTransactions} />
+            {Object.keys(transactions).map(key => (
               <Transaction
                 key={key}
-                description={this.state.transactions[key].description}
                 onDelete={this.handleDelete(key)}
-                type={this.state.transactions[key].type}
-                value={this.state.transactions[key].value}
+                onTypeToggle={this.handleTypeToggle(key)}
+                onDateChange={() => null}
+                onEditRequest={() => null}
+                onActionsToggle={this.handleActionsToggle(key)}
+                isActionsOpen={this.state.transactionActions === key}
+                transaction={transactions[key]}
               />
             ))}
+            <Row className="justify-content-between cards mx-0 mb-2">
+              <Card color="secondary" className="border-0">
+                <CardTitle>Income</CardTitle>
+                <CardBody className="text-light">
+                  {'+' + prettifyPrice(transactionSummary.income)}
+                </CardBody>
+              </Card>
+              <Card color="secondary" className="border-0">
+                <CardTitle>Outcome</CardTitle>
+                <CardBody className="text-light">
+                  {'-' + prettifyPrice(transactionSummary.outcome)}
+                </CardBody>
+              </Card>
+            </Row>
           </Col>
         </Row>
         <Row className="footer">
-          <TransactionsSummary transactions={this.state.transactions} />
           <Button
             color="primary"
             className="transaction-add w-100 rounded-0 py-3"

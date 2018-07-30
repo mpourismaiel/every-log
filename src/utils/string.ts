@@ -17,3 +17,26 @@ export const prettifyPrice = (price: number | string) =>
     .split('')
     .reverse()
     .join('');
+
+export const toColor = (text: string, factor: number = 1) =>
+  '#' +
+  text
+    .split('')
+    .reduce(
+      (tmp, char, i, arr) => {
+        tmp[Math.floor((i / arr.length) * 6)] += char;
+        return tmp;
+      },
+      ['', '', ''],
+    )
+    .map(slice =>
+      slice.split('').reduce((tmp, char) => {
+        tmp += char.charCodeAt(0);
+        return tmp;
+      }, 0),
+    )
+    .map(num => (num * factor) % 16)
+    .reduce((tmp, num) => {
+      tmp += '0123456789ABCDEF'[num];
+      return tmp;
+    }, '');

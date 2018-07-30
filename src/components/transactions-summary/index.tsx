@@ -1,44 +1,41 @@
 import * as React from 'react';
 import classNames from 'classnames';
-import { Row } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
+import { Minus, Plus } from 'react-feather';
 
-import { ITransaction } from '../../pages';
 import { prettifyPrice } from '../../utils/string';
-import { IDictionary } from '../../types';
+import { formatDate } from '../../utils/date';
+
+import './styles.scss';
 
 export interface ITransactionsSummaryProps {
-  transactions: IDictionary<ITransaction>;
+  totalTransactions: number;
 }
 
 const TransactionsSummary: React.SFC<ITransactionsSummaryProps> = ({
-  transactions,
+  totalTransactions,
 }: ITransactionsSummaryProps) => {
-  const totalTransactions = Object.keys(transactions).reduce((tmp, key) => {
-    if (transactions[key].type === 'outcome') {
-      tmp -= parseInt(transactions[key].value.replace(/,/g, ''), 0);
-    } else {
-      tmp += parseInt(transactions[key].value.replace(/,/g, ''), 0);
-    }
-    return tmp;
-  }, 0);
-
-  if (totalTransactions !== 0) {
-    return (
-      <Row className="border-top py-2 mt-1 w-100 mx-0 px-3">
-        <span className="text-secondary mr-2">
-          {totalTransactions > 0 ? 'Remaining:' : 'In debt:'}
-        </span>
-        <b
+  return (
+    <Col className="mt-1 w-100 mb-4 mx-0 pt-4 px-3 transaction-summary">
+      <Row className="justify-content-start mx-0">
+        <Col className="px-0">
+          <h6 className="date text-dark">
+            {formatDate(new Date(), 'Today, %dd, %m %y')}
+          </h6>
+          <h5 className="text-dark">Total balance:</h5>
+        </Col>
+      </Row>
+      <Row className="justify-content-end mb-2 mx-0">
+        <h1
           className={classNames('text-secondary', {
             'text-success': totalTransactions > 0,
           })}>
+          {totalTransactions > 0 ? <Plus /> : <Minus />}
           {prettifyPrice(totalTransactions)}
-        </b>
+        </h1>
       </Row>
-    );
-  }
-
-  return null;
+    </Col>
+  );
 };
 
 export default TransactionsSummary;

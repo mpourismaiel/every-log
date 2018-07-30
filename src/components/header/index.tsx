@@ -28,7 +28,7 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         className={classNames('mx-0 header justify-content-between', {
           'collapse-open': this.state.exportOpen,
         })}>
-        <h3 className="text-secondary">Transactions</h3>
+        <h3 className="text-secondary">EveryLog</h3>
         <Menu onClick={this.handleCollapse} />
       </Row>
     );
