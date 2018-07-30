@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as FileSaver from 'file-saver';
 import classNames from 'classnames';
 import { Container, Row, Col, Button } from 'reactstrap';
+import { PlusCircle } from 'react-feather';
 
 import { IDictionary } from '../types';
 import Transaction from '../components/transaction';
@@ -9,11 +10,9 @@ import TransactionEntry, {
   TransactionType,
 } from '../components/transaction-entry';
 import { formatDate } from '../utils/date';
-
-import './styles.scss';
 import TransactionsSummary from '../components/transactions-summary';
-import ImportExport from '../components/import-export';
-import { PlusCircle } from 'react-feather';
+import Header from '../components/header';
+import './styles.scss';
 
 export interface ITransaction {
   description: string;
@@ -129,29 +128,14 @@ class Index extends React.Component<{}, IIndexState> {
     );
   };
 
-  handleCollapse = () => this.setState({ exportOpen: !this.state.exportOpen });
-
   render() {
     return (
       <Container className="viewport" style={{ height: this.state.height }}>
-        <Row
-          className={classNames('mx-0 header border-bottom', {
-            'collapse-open': this.state.exportOpen,
-          })}>
-          <Col className="px-0">
-            <Row className="mx-0 justify-content-between">
-              <h3 className="text-secondary">Transactions</h3>
-              <Button outline color="info" onClick={this.handleCollapse}>
-                Export/Import
-              </Button>
-            </Row>
-            <ImportExport
-              handleExport={this.handleExport}
-              fileInputRef={node => (this.fileInput = node)}
-              handleImport={this.handleImport}
-            />
-          </Col>
-        </Row>
+        <Header
+          inputRef={node => (this.fileInput = node)}
+          handleExport={this.handleExport}
+          handleImport={this.handleImport}
+        />
         <Row className="px-0 scrollable">
           <Col>
             {Object.keys(this.state.transactions).map(key => (

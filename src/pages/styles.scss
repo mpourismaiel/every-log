@@ -1,37 +1,5 @@
 @import '../assets/scss/_mixins.scss';
 
-.header {
-  height: 48px;
-  padding-bottom: 5px;
-  padding-top: 5px;
-  box-sizing: border-box;
-  display: flex;
-  transition: all 0.2s ease-in-out;
-
-  .export-import {
-    height: 0;
-    visibility: hidden;
-    opacity: 0;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-
-  &.collapse-open {
-    height: 106px;
-
-    .export-import {
-      height: 38px;
-      visibility: visible;
-      opacity: 1;
-      transition: all 0.2s ease-in-out;
-    }
-  }
-
-  h3 {
-    margin-bottom: 0;
-  }
-}
-
 .scrollable {
   @include breakpoint-sm {
     padding-left: 15px !important;

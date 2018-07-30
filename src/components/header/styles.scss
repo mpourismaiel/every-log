@@ -1,0 +1,11 @@
+.header {
+  height: 64px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+
+  h3 {
+    margin-bottom: 0;
+  }
+}
