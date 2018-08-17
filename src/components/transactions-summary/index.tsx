@@ -30,8 +30,12 @@ const TransactionsSummary: React.SFC<ITransactionsSummaryProps> = ({
           className={classNames('text-secondary', {
             'text-success': totalTransactions > 0,
           })}>
-          {totalTransactions > 0 ? <Plus /> : <Minus />}
-          {prettifyPrice(totalTransactions)}
+          {totalTransactions > 0 ? (
+            <Plus />
+          ) : totalTransactions < 0 ? (
+            <Minus />
+          ) : null}
+          {prettifyPrice(totalTransactions) || 0}
         </h1>
       </Row>
     </Col>

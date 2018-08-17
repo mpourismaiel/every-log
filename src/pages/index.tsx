@@ -195,13 +195,17 @@ class Index extends React.Component<{}, IIndexState> {
               <Card color="secondary" className="border-0">
                 <CardTitle>Income</CardTitle>
                 <CardBody className="text-light">
-                  {'+' + prettifyPrice(transactionSummary.income)}
+                  {transactionSummary.income > 0
+                    ? '+' + prettifyPrice(transactionSummary.income)
+                    : 0}
                 </CardBody>
               </Card>
               <Card color="secondary" className="border-0">
                 <CardTitle>Outcome</CardTitle>
                 <CardBody className="text-light">
-                  {'-' + prettifyPrice(transactionSummary.outcome)}
+                  {transactionSummary.outcome > 0
+                    ? '-' + prettifyPrice(transactionSummary.outcome)
+                    : 0}
                 </CardBody>
               </Card>
             </Row>
@@ -222,6 +226,7 @@ class Index extends React.Component<{}, IIndexState> {
           />
           <TransactionEntry
             show={this.state.showAddTransaction}
+            hide={() => this.setState({ showAddTransaction: false })}
             onSubmit={this.handleSubmit}
           />
         </Row>

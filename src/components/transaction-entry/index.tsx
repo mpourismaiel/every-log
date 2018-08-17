@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Collapse, Input, Row, Col, FormGroup } from 'reactstrap';
-import { ChevronUp, Check, Delete, Plus, Minus } from 'react-feather';
+import { ChevronUp, Check, Delete, Plus, Minus, X } from 'react-feather';
 
 import { prettifyPrice } from '../../utils/string';
 import './styles.scss';
@@ -11,6 +11,7 @@ export type TransactionType = 'outcome' | 'income';
 
 export interface ITransactionEntryProps {
   show: boolean;
+  hide: () => void;
   onSubmit: (data: ITransaction) => void;
 }
 
@@ -43,7 +44,7 @@ class TransactionEntry extends React.Component<
   ITransactionEntryProps,
   ITransactionEntryState
 > {
-  state: ITransactionEntryState = {
+  static InitialState: ITransactionEntryState = {
     category: categories[0].title,
     date: '',
     description: '',
@@ -51,11 +52,18 @@ class TransactionEntry extends React.Component<
     type: 'outcome',
     price: '',
   };
+  state: ITransactionEntryState = TransactionEntry.InitialState;
 
   private node: HTMLDivElement = null;
 
   componentDidMount() {
     this.node.focus();
+  }
+
+  componentDidUpdate(prevProps: ITransactionEntryProps) {
+    if (prevProps.show !== this.props.show) {
+      this.setState(TransactionEntry.InitialState);
+    }
   }
 
   handleSubmit = e => {
@@ -67,14 +75,7 @@ class TransactionEntry extends React.Component<
       type,
       price: parseInt(price.toString().replace(/,/g, ''), 10),
     });
-    this.setState({
-      category: categories[0].title,
-      date: '',
-      description: '',
-      expand: false,
-      price: '',
-      type: 'outcome',
-    });
+    this.setState(TransactionEntry.InitialState);
   };
 
   handleKeyDown = e => {
@@ -178,13 +179,19 @@ class TransactionEntry extends React.Component<
               </div>
               {prettifyPrice(this.state.price) || '0'}
             </Row>
-            <div
-              className={classNames('position-absolute backspace', {
-                show: !!this.state.price,
-              })}
-              onClick={() => this.handleChange('price')('backspace')}>
-              <Delete color="#fff" />
-            </div>
+            {this.state.price ? (
+              <div
+                className="position-absolute backspace"
+                onClick={() => this.handleChange('price')('backspace')}>
+                <Delete color="#fff" />
+              </div>
+            ) : (
+              <div
+                className="position-absolute backspace"
+                onClick={this.props.hide}>
+                <X color="#fff" />
+              </div>
+            )}
           </Row>
           <Col className="px-0 numbers-container">
             <Row>{this.renderNumbers(1, 2, 3)}</Row>

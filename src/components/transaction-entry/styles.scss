@@ -8,6 +8,7 @@
   height: 0;
   background: linear-gradient(#D85D5F 0%, #E84670 100%);
   box-shadow: 0 0 30px rgba(216, 93, 95, 0.7);
+  overflow-y: auto;
   transition: all 0.2s ease-out;
   z-index: 1100;
 
@@ -20,17 +21,10 @@
   }
 
   .backspace {
-    right: 0;
-    top: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.2s ease-out;
-
-    &.show {
-      right: 32px;
-      opacity: 1;
-      visibility: visible;
-    }
+    top: -4px;
+    right: 32px;
+    opacity: 1;
+    visibility: visible;
   }
 
   .price-input {
