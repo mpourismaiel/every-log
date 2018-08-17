@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Collapse, Input, Row, Col } from 'reactstrap';
+import { Collapse, Input, Row, Col, FormGroup } from 'reactstrap';
 import {
   ChevronUp,
   Check,
@@ -30,6 +30,7 @@ export interface ITransactionEntryProps {
 
 export interface ITransactionEntryState {
   category: string;
+  date: string;
   description: string;
   expand: boolean;
   type: TransactionType;
@@ -42,6 +43,7 @@ class TransactionEntry extends React.Component<
 > {
   state: ITransactionEntryState = {
     category: 'Twitter',
+    date: '',
     description: '',
     expand: false,
     type: 'outcome',
@@ -72,8 +74,8 @@ class TransactionEntry extends React.Component<
     this.handleSubmit(e);
   };
 
-  handleChange = (key: 'price' | 'description' | 'category') => (
-    value: string | number,
+  handleChange = (key: 'price' | 'description' | 'category' | 'date') => (
+    value: any,
   ) => {
     if (key === 'price') {
       if (value === 'backspace') {
@@ -82,7 +84,7 @@ class TransactionEntry extends React.Component<
         value = (this.state.price + value).toString().replace(/^(0|۰)*/g, '');
       }
     } else if (typeof value !== 'string') {
-      value = (value as any).target.value;
+      value = value.target.value;
     }
 
     this.setState({ [key]: value } as any);
@@ -177,6 +179,22 @@ class TransactionEntry extends React.Component<
               <Paperclip color="#fff" />
             </Col>
           </Row>
+          <Collapse isOpen={this.state.expand} className="px-0 form-container">
+            <FormGroup>
+              <Input
+                id="description"
+                placeholder="Description"
+                onChange={this.handleChange('description')}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Input
+                id="date"
+                placeholder="Date: Today"
+                onChange={this.handleChange('date')}
+              />
+            </FormGroup>
+          </Collapse>
           <Row className="justify-content-center align-items-center price-input position-relative">
             <Row className="mx-0 py-0 pb-2 text-center">
               <div
@@ -217,9 +235,6 @@ class TransactionEntry extends React.Component<
               </Col>
             </Row>
           </Col>
-          <Collapse isOpen={false}>
-            <Input placeholder="Description" />
-          </Collapse>
         </Col>
       </div>
     );

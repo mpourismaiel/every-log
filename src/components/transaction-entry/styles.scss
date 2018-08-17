@@ -85,6 +85,27 @@
     }
   }
 
+  .numbers-container {
+    overflow: hidden;
+  }
+
+  .form-container {
+    input {
+      background-color: transparent;
+      box-shadow: none;
+      color: white;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 1.2rem;
+
+      &:focus, &:active, &:hover {
+        box-shadow: none;
+        outline: none;
+      }
+    }
+  }
+
   .category {
     width: 64px;
     height: 64px;
