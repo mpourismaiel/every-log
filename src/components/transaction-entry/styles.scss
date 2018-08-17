@@ -107,22 +107,22 @@
   }
 
   .category {
-    width: 64px;
+    width: 80px;
     height: 64px;
-    flex: 0 0 64px;
-    display: flex;
+    flex: 0 0 auto;
     padding: 0;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    transition: all 0.2s ease-out;
 
-    svg {
-      transition: all 0.2s ease-out;
+    &:last-child {
+      padding-right: 20px;
     }
 
     &.active {
-      svg {
-        stroke: #452241;
-      }
+      color: #452241 !important;
     }
   }
 }
