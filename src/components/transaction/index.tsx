@@ -17,6 +17,7 @@ import { formatDate } from '../../utils/date';
 import './styles.scss';
 
 export interface ITransactionProps {
+  createdAt: any;
   isActionsOpen: boolean;
   onDelete: () => void;
   onTypeToggle: () => void;
@@ -27,10 +28,29 @@ export interface ITransactionProps {
 }
 
 export interface ITransactionState {
-  isActions: boolean;
+  isNew: boolean;
 }
 
-class Transaction extends React.PureComponent<ITransactionProps> {
+class Transaction extends React.PureComponent<
+  ITransactionProps,
+  ITransactionState
+> {
+  state: ITransactionState = {
+    isNew: this.props.createdAt > Date.now() - 500,
+  };
+
+  private newTimer: any = null;
+
+  componentDidMount() {
+    if (this.props.createdAt > Date.now() - 500) {
+      this.newTimer = setTimeout(this.checkNew, 500);
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.newTimer);
+  }
+
   render() {
     const { category, date, description, price, type } = this.props.transaction;
     return (
@@ -38,6 +58,7 @@ class Transaction extends React.PureComponent<ITransactionProps> {
         className={classNames('transaction mx-2 mb-2 py-2', {
           income: type === 'income',
           'display-actions': this.props.isActionsOpen,
+          new: this.state.isNew,
         })}
         onClick={this.props.onActionsToggle}>
         <Row className="mx-0 normal">
@@ -82,6 +103,11 @@ class Transaction extends React.PureComponent<ITransactionProps> {
       </div>
     );
   }
+
+  private checkNew = () => {
+    this.setState({ isNew: false });
+    clearTimeout(this.newTimer);
+  };
 }
 
 export default Transaction;

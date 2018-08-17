@@ -84,7 +84,7 @@ class Index extends React.Component<{}, IIndexState> {
     fileReader.onloadend = () => {
       try {
         this.setState(
-          { transactions: JSON.parse(fileReader.result) },
+          { transactions: JSON.parse(fileReader.result as string) },
           this.saveToStorage,
         );
         alert('Your data has been imported successfully');
@@ -108,7 +108,7 @@ class Index extends React.Component<{}, IIndexState> {
       {
         transactions: {
           ...this.state.transactions,
-          [Object.keys(this.state.transactions).length]: {
+          [Date.now()]: {
             ...data,
             date: Date.now(),
           },
@@ -181,6 +181,7 @@ class Index extends React.Component<{}, IIndexState> {
             {Object.keys(transactions).map(key => (
               <Transaction
                 key={key}
+                createdAt={key}
                 onDelete={this.handleDelete(key)}
                 onTypeToggle={this.handleTypeToggle(key)}
                 onDateChange={() => null}

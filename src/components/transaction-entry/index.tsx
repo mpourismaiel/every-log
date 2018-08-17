@@ -58,13 +58,21 @@ class TransactionEntry extends React.Component<
 
   handleSubmit = e => {
     e.preventDefault();
-    const { category, type, price } = this.state;
+    const { category, description, type, price } = this.state;
     this.props.onSubmit({
       category,
+      description,
       type,
       price: parseInt(price.toString().replace(/,/g, ''), 10),
     });
-    this.setState({ category: 'Twitter', price: '', type: 'outcome' });
+    this.setState({
+      category: 'Twitter',
+      date: '',
+      description: '',
+      expand: false,
+      price: '',
+      type: 'outcome',
+    });
   };
 
   handleKeyDown = e => {
