@@ -1,6 +1,12 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import { Row } from 'reactstrap';
+import {
+  Navbar,
+  NavbarBrand,
+  Collapse,
+  Nav,
+  NavItem,
+  NavLink,
+} from 'reactstrap';
 
 import './styles.scss';
 import { Menu } from 'react-feather';
@@ -12,25 +18,31 @@ export interface IHeaderProps {
 }
 
 export interface IHeaderState {
-  exportOpen: boolean;
+  isOpen: boolean;
 }
 
 class Header extends React.Component<IHeaderProps, IHeaderState> {
   state: IHeaderState = {
-    exportOpen: false,
+    isOpen: false,
   };
 
-  handleCollapse = () => this.setState({ exportOpen: !this.state.exportOpen });
+  toggleCollapse = () => this.setState({ isOpen: !this.state.isOpen });
 
   render() {
     return (
-      <Row
-        className={classNames('mx-0 header justify-content-between', {
-          'collapse-open': this.state.exportOpen,
-        })}>
-        <h3 className="text-secondary">EveryLog</h3>
-        <Menu onClick={this.handleCollapse} />
-      </Row>
+      <Navbar color="faded" light>
+        <NavbarBrand href="/" className="mr-auto">
+          EveryLog
+        </NavbarBrand>
+        <Menu onClick={this.toggleCollapse} className="mr-2" />
+        <Collapse isOpen={this.state.isOpen} navbar>
+          <Nav navbar>
+            <NavItem>
+              <NavLink href="/login">Login</NavLink>
+            </NavItem>
+          </Nav>
+        </Collapse>
+      </Navbar>
     );
   }
 }
