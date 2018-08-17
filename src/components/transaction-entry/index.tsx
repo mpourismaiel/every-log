@@ -29,6 +29,7 @@ export const categories: Array<{
   icon: string;
   hide?: boolean;
 }> = [
+  { title: 'No Category', icon: 'swap_horiz' },
   { title: 'Food', icon: 'fastfood' },
   { title: 'Transport', icon: 'directions_car' },
   { title: 'Business', icon: 'business_center' },
