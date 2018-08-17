@@ -23,7 +23,11 @@ export interface ITransactionEntryState {
   price: string;
 }
 
-export const categories: Array<{ title: string; icon: string }> = [
+export const categories: Array<{
+  title: string;
+  icon: string;
+  hide?: boolean;
+}> = [
   { title: 'Food', icon: 'fastfood' },
   { title: 'Transport', icon: 'directions_car' },
   { title: 'Business', icon: 'business_center' },
@@ -32,6 +36,7 @@ export const categories: Array<{ title: string; icon: string }> = [
   { title: 'Gift', icon: 'card_giftcard' },
   { title: 'Debt', icon: 'person' },
   { title: 'Repayment', icon: 'person_add' },
+  { title: 'Hidden', icon: 'swap_horiz', hide: true },
 ];
 
 class TransactionEntry extends React.Component<
@@ -63,7 +68,7 @@ class TransactionEntry extends React.Component<
       price: parseInt(price.toString().replace(/,/g, ''), 10),
     });
     this.setState({
-      category: 'Twitter',
+      category: categories[0].title,
       date: '',
       description: '',
       expand: false,
@@ -127,16 +132,23 @@ class TransactionEntry extends React.Component<
             />
           </Row>
           <Row className="justify-content-between flex-nowrap overflow-x">
-            {categories.map(category => (
-              <Col
-                onClick={() => this.handleChange('category')(category.title)}
-                className={classNames('category text-white', {
-                  active: this.state.category === category.title,
-                })}>
-                <span className="material-icons">{category.icon}</span>
-                <span className="mt-1">{category.title}</span>
-              </Col>
-            ))}
+            {categories.map(category => {
+              if (category.hide) {
+                return null;
+              }
+
+              return (
+                <Col
+                  key={category.title}
+                  onClick={() => this.handleChange('category')(category.title)}
+                  className={classNames('category text-white', {
+                    active: this.state.category === category.title,
+                  })}>
+                  <span className="material-icons">{category.icon}</span>
+                  <span className="mt-1">{category.title}</span>
+                </Col>
+              );
+            })}
           </Row>
           <Collapse isOpen={this.state.expand} className="px-0 form-container">
             <FormGroup>
@@ -144,6 +156,7 @@ class TransactionEntry extends React.Component<
                 id="description"
                 placeholder="Description"
                 onChange={this.handleChange('description')}
+                value={this.state.description}
               />
             </FormGroup>
             <FormGroup>

@@ -1,20 +1,13 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Row, Col } from 'reactstrap';
-import {
-  Twitter,
-  Edit2,
-  Trash2,
-  Plus,
-  Minus,
-  Calendar,
-  X,
-} from 'react-feather';
+import { Edit2, Trash2, Plus, Minus, Calendar, X } from 'react-feather';
 
 import { prettifyPrice } from '../../utils/string';
 import { ITransaction } from '../../pages';
 import { formatDate } from '../../utils/date';
 import './styles.scss';
+import { categories } from '../transaction-entry';
 
 export interface ITransactionProps {
   createdAt: any;
@@ -63,7 +56,14 @@ class Transaction extends React.PureComponent<
         onClick={this.props.onActionsToggle}>
         <Row className="mx-0 normal">
           <Col xs="auto" className="icon">
-            <Twitter />
+            <span className="material-icons">
+              {
+                (
+                  categories.find(c => c.title === category) ||
+                  categories[categories.length - 1]
+                ).icon
+              }
+            </span>
           </Col>
           <Col>
             <Row className="justify-content-between align-items-end pb-1 main mx-0">
