@@ -5,7 +5,10 @@
     "object-literal-sort-keys": false,
     "member-access": false,
     "jsx-boolean-value": false,
-    "jsx-no-lambda": false
+    "jsx-no-lambda": false,
+    "no-var-requires": false,
+    "no-console": false,
+    "no-debugger": false
   },
   "linterOptions": {
     "exclude": [

@@ -1,6 +1,7 @@
 // tslint:disable:no-console
 import * as mongoose from 'mongoose';
 import TransactionModel from './transaction';
+import UserModel from './user';
 
 const mongoDB = 'mongodb://127.0.0.1:27017/everylog';
 mongoose.connect(
@@ -15,6 +16,7 @@ db.once('open', console.log.bind('Mongodb connected'));
 
 const models = {
   Transaction: TransactionModel,
+  User: UserModel,
 };
 
 export default models;
