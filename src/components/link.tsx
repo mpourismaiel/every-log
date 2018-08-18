@@ -15,7 +15,7 @@ class Link extends React.PureComponent<ILinkProps> {
   };
 
   render() {
-    const { href, children, ...props } = this.props;
+    const { children, ...props } = this.props;
     return (
       <a onClick={this.transition} {...props}>
         {children}

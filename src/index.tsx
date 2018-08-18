@@ -7,6 +7,7 @@ import history from './history';
 import Route from './components/route';
 
 import './styles.scss';
+import Login from './pages/login';
 
 export interface IAppState {
   location: History;
@@ -32,7 +33,8 @@ class App extends React.Component<{}, IAppState> {
   render() {
     return (
       <>
-        <Route path="/" component={<Index />} />
+        <Route exact path="/" component={<Index />} />
+        <Route exact path="/login" component={<Login />} />
       </>
     );
   }

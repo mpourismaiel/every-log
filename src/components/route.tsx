@@ -3,6 +3,7 @@ import { IDictionary } from '../types';
 import history from '../history';
 
 export interface IRouteProps {
+  exact?: boolean;
   path: string;
   render?: (
     props?: IDictionary<any>,
@@ -12,8 +13,12 @@ export interface IRouteProps {
 
 class Route extends React.PureComponent<IRouteProps> {
   render() {
-    (window as any).h = history;
-    if (!new RegExp(this.props.path).test(history.location.pathname)) {
+    const match = history.location.pathname.match(new RegExp(this.props.path));
+    if (
+      !match ||
+      (this.props.exact &&
+        match.reduce((tmp, m) => tmp + m, '') !== history.location.pathname)
+    ) {
       return null;
     }
 
