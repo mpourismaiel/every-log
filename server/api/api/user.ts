@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { error } from '../../utils/messages';
 import models from '../../models';
 import { serializer } from '../../models/user';
+import { isLoggedIn, token } from '../../utils/policies';
 
 export default apiRouter => {
   apiRouter.post('/user/signup', async (req, res) => {
@@ -36,7 +37,7 @@ export default apiRouter => {
       .then(user => {
         res.status(200).json({
           user: serializer(user.toObject()),
-          token: res.jwt({ email }).token,
+          token: `Bearer ${token(user._id)}`,
         });
       })
       .catch(err => {
@@ -62,7 +63,7 @@ export default apiRouter => {
 
           res.status(200).json({
             user: serializer(user.toObject()),
-            token: res.jwt({ email }).token,
+            token: `Bearer ${token(user._id)}`,
           });
         });
       })
@@ -71,9 +72,12 @@ export default apiRouter => {
       });
   });
 
-  apiRouter.get('/user', (req, res) => {
-    if (!req.headers.authorization) {
-      return res.status(403).json(error('Not authorized'));
-    }
+  apiRouter.get('/user', isLoggedIn(), (req, res) => {
+    models.User.findOne({ _id: req.user._id })
+      .exec()
+      .then(user => {
+        res.status(200).json({ user: serializer(user.toObject()) });
+      })
+      .catch(err => res.status(500).json(error(err)));
   });
 };
