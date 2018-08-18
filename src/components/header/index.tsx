@@ -1,15 +1,9 @@
 import * as React from 'react';
-import {
-  Navbar,
-  NavbarBrand,
-  Collapse,
-  Nav,
-  NavItem,
-  NavLink,
-} from 'reactstrap';
+import { Navbar, NavbarBrand, Collapse, Nav, NavItem } from 'reactstrap';
 
 import './styles.scss';
 import { Menu } from 'react-feather';
+import Link from '../link';
 
 export interface IHeaderProps {
   handleExport: (e) => void;
@@ -38,7 +32,9 @@ class Header extends React.Component<IHeaderProps, IHeaderState> {
         <Collapse isOpen={this.state.isOpen} navbar>
           <Nav navbar>
             <NavItem>
-              <NavLink href="/login">Login</NavLink>
+              <Link href="/login" className="nav-link">
+                Login
+              </Link>
             </NavItem>
           </Nav>
         </Collapse>
