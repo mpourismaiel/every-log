@@ -22,6 +22,7 @@ import Header from '../components/header';
 import './styles.scss';
 import Transaction from '../components/transaction';
 import { prettifyPrice } from '../utils/string';
+import history from '../history';
 
 export interface ITransaction {
   category: string;
@@ -43,7 +44,7 @@ class Index extends React.Component<{}, IIndexState> {
   state: IIndexState = {
     exportOpen: false,
     height: 600,
-    transactions: JSON.parse(localStorage.getItem('transactions') || '{}'),
+    transactions: {},
     transactionActions: null,
     showAddTransaction: false,
   };
@@ -52,6 +53,7 @@ class Index extends React.Component<{}, IIndexState> {
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
+    this.fillStorage();
     this.handleResize();
   }
 
@@ -229,6 +231,16 @@ class Index extends React.Component<{}, IIndexState> {
       </Container>
     );
   }
+
+  private fillStorage = () => {
+    const authorization = localStorage.getItem('authorization');
+    const isUsingAuth = localStorage.getItem('isUsingAuth');
+    if (!authorization && isUsingAuth === 'false') {
+      JSON.parse(localStorage.getItem('transactions') || '{}');
+    } else {
+      history.push({ pathname: '/login', search: '' });
+    }
+  };
 }
 
 export default Index;
