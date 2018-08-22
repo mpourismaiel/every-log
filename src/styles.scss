@@ -1,6 +1,7 @@
 @import './assets/scss/_mixins.scss';
 $primary: #d85d5f;
 $secondary: #452241;
+$danger: #d85d5f;
 $info: rgba(0, 0, 0, 0.2);
 @import 'bootstrap/scss/bootstrap.scss';
 
@@ -70,4 +71,14 @@ body {
 
 .overflow-y {
   overflow-y: auto;
+}
+
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+
+  to {
+    transform:rotate(360deg);
+  }
 }

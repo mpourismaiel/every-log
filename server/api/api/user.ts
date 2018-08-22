@@ -56,7 +56,12 @@ export default apiRouter => {
 
     models.User.findOne({ email })
       .then((user: any) => {
-        bcrypt.compare(password, user.password, err => {
+        if (!user) {
+          return res.status(500).json(error('User not found'));
+        }
+
+        bcrypt.compare(password, user.toObject().password, err => {
+          console.log(61);
           if (err) {
             return res.status(403).json(error('Email or password is invalid'));
           }
@@ -68,6 +73,7 @@ export default apiRouter => {
         });
       })
       .catch(err => {
+        console.log(73, err);
         return res.status(500).json(error(err || 'User not found'));
       });
   });

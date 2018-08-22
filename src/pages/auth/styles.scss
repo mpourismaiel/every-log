@@ -1,0 +1,60 @@
+.auth {
+  input {
+    padding: 10px;
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid rgba(69, 34, 65, 0.2);
+    transition: all 0.2s ease-out;
+    margin: 10px 0;
+
+    &:focus {
+      outline: none;
+      border-bottom-color: rgba(69, 34, 65, 0.5);
+    }
+  }
+
+  span.show {
+    top: 50%;
+    transform: translateY(-50%);
+    right: 8px;
+  }
+
+  .form-container, form {
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 50px;
+  }
+
+  form {
+    padding: 0;
+    margin: 0;
+  }
+
+  button {
+    height: 48px;
+    border: none;
+    color: white;
+    outline: none;
+
+    &:not([disabled]) {
+      background-color: #d85d5f;
+    }
+
+    &:active, &:focus {
+      outline: none;
+    }
+
+    &.loading {
+      svg {
+        animation: spin 3s infinite linear;
+      }
+    }
+  }
+
+  .has-error {
+    border-color: #d85d5f;
+  }
+}

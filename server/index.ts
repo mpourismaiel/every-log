@@ -7,7 +7,7 @@ import * as cookieParser from 'cookie-parser';
 import registerRoutes from './api';
 
 const app = express();
-app.use(morgan('combined'));
+app.use(morgan('tiny'));
 app.use(cors());
 app.use(cookieParser());
 app.use(

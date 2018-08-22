@@ -169,12 +169,8 @@ class Index extends React.Component<{}, IIndexState> {
       transactionSummary.income - transactionSummary.outcome;
 
     return (
-      <Container className="viewport" style={{ height: this.state.height }}>
-        <Header
-          inputRef={node => (this.fileInput = node)}
-          handleExport={this.handleExport}
-          handleImport={this.handleImport}
-        />
+      <Container className="viewport app" style={{ height: this.state.height }}>
+        <Header />
         <Row className="px-0 scrollable">
           <Col>
             <TransactionsSummary totalTransactions={totalTransactions} />
