@@ -2,7 +2,6 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { Container, Col, Row } from 'reactstrap';
 
-import Header from '../../components/header';
 import './styles.scss';
 import { API, setToken } from '../../utils/request';
 import history from '../../history';
@@ -95,8 +94,10 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
       <Container
         className="viewport auth"
         style={{ height: this.state.height }}>
-        <Header />
+        <div className="background" />
         <Col className="form-container">
+          <div className="empty" />
+          <h1 className="logo">EveryLog</h1>
           <form onSubmit={this.handleLogin}>
             <Row className="mx-0">
               <input

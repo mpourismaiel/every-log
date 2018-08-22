@@ -1,8 +1,47 @@
 .auth {
+  .background {
+    background: url(./bg.jpg) top center no-repeat;
+    background-size: cover;
+    filter: blur(1px);
+    margin: -1px;
+    position: fixed;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+  }
+
+  .logo {
+    text-align: center;
+    color: rgba($color: white, $alpha: 0.9);
+    font-size: 4rem;
+    text-shadow: 1px 1px 10px rgba($color: black, $alpha: 0.5);
+  }
+
+  .form-container, form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-container {
+    background: linear-gradient(transparent 0, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
+    justify-content: space-between;
+    flex: 1 0 auto;
+    padding-bottom: 50px;
+  }
+
+  form {
+    padding: 0;
+    margin: 0;
+    justify-content: flex-end;
+    min-height: 345px;
+  }
+
   input {
     padding: 10px;
     display: block;
     width: 100%;
+    background: rgba($color: #ddd, $alpha: 0.9);
     border: none;
     border-bottom: 1px solid rgba(69, 34, 65, 0.2);
     transition: all 0.2s ease-out;
@@ -20,24 +59,12 @@
     right: 8px;
   }
 
-  .form-container, form {
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding-bottom: 50px;
-  }
-
-  form {
-    padding: 0;
-    margin: 0;
-  }
-
   button {
     height: 48px;
     border: none;
     color: white;
     outline: none;
+    background: rgba($color: #ddd, $alpha: 0.9);
 
     &:not([disabled]) {
       background-color: #d85d5f;
