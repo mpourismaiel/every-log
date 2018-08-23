@@ -266,7 +266,7 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
       })
       .catch(err =>
         this.setState({
-          error: { message: err.error },
+          error: { message: err.response.data.error },
           password: '',
           passwordConfirm: '',
           isLoggingIn: false,
@@ -293,7 +293,7 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
       })
       .catch(err =>
         this.setState({
-          error: { message: err.error },
+          error: { message: err.response.data.error },
           password: '',
           passwordConfirm: '',
           isRegistering: false,
