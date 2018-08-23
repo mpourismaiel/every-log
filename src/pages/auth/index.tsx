@@ -201,7 +201,7 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
                 )}
               </Col>
               <Col xs="auto">
-                <Link className="p-2 d-block" href="/">
+                <Link className="p-2 d-block" href="/" onClick={this.skipAuth}>
                   Skip to app
                 </Link>
               </Col>
@@ -211,6 +211,11 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
       </Container>
     );
   }
+
+  private skipAuth = e => {
+    e.preventDefault();
+    localStorage.setItem('isUsingAuth', 'false');
+  };
 
   private validate = () => {
     const { email, loginForm, password, passwordConfirm } = this.state;

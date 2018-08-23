@@ -12,10 +12,14 @@ class Link extends React.PureComponent<ILinkProps> {
       pathname: event.currentTarget.pathname,
       search: event.currentTarget.search,
     });
+
+    if (this.props.onClick) {
+      this.props.onClick(event);
+    }
   };
 
   render() {
-    const { children, ...props } = this.props;
+    const { onClick, children, ...props } = this.props;
     return (
       <a onClick={this.transition} {...props}>
         {children}

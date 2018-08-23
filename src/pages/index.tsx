@@ -235,10 +235,10 @@ class Index extends React.Component<{}, IIndexState> {
   private fillStorage = () => {
     const authorization = localStorage.getItem('authorization');
     const isUsingAuth = localStorage.getItem('isUsingAuth');
-    if (!authorization && isUsingAuth === 'false') {
+    if (isUsingAuth === 'false') {
       JSON.parse(localStorage.getItem('transactions') || '{}');
-    } else {
-      history.push({ pathname: '/login', search: '' });
+    } else if (!authorization) {
+      history.push({ pathname: '/login' });
     }
   };
 }
