@@ -60,9 +60,12 @@ export default apiRouter => {
           return res.status(500).json(error('User not found'));
         }
 
-        bcrypt.compare(password, user.toObject().password, err => {
-          console.log(61);
+        bcrypt.compare(password, user.toObject().password, (err, result) => {
           if (err) {
+            return res.status(500).json(error('Server Error'));
+          }
+
+          if (!result) {
             return res.status(403).json(error('Email or password is invalid'));
           }
 
