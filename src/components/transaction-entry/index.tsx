@@ -147,7 +147,7 @@ class TransactionEntry extends React.Component<
                     active: this.state.category === category.title,
                   })}>
                   <span className="material-icons">{category.icon}</span>
-                  <span className="mt-1">{category.title}</span>
+                  <span className="mt-1 title">{category.title}</span>
                 </Col>
               );
             })}

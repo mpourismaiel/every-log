@@ -23,6 +23,7 @@ import './styles.scss';
 import Transaction from '../components/transaction';
 import { prettifyPrice } from '../utils/string';
 import history from '../history';
+import { API } from '../utils/request';
 
 export interface ITransaction {
   category: string;
@@ -106,19 +107,35 @@ class Index extends React.Component<{}, IIndexState> {
       return;
     }
 
-    this.setState(
-      {
-        transactions: {
-          ...this.state.transactions,
-          [Date.now()]: {
-            ...data,
-            date: Date.now(),
+    const authorization = localStorage.getItem('authorization');
+    if (authorization) {
+      API.createTransaction({
+        ...data,
+        date: Date.now(),
+      }).then(resp => {
+        this.setState({
+          transactions: {
+            ...this.state.transactions,
+            [resp.data.date]: resp.data,
           },
+          showAddTransaction: false,
+        });
+      });
+    } else {
+      this.setState(
+        {
+          transactions: {
+            ...this.state.transactions,
+            [Date.now()]: {
+              ...data,
+              date: Date.now(),
+            },
+          },
+          showAddTransaction: false,
         },
-        showAddTransaction: false,
-      },
-      this.saveToStorage,
-    );
+        this.saveToStorage,
+      );
+    }
   };
 
   handleDelete = (key: string) => () => {
@@ -239,6 +256,10 @@ class Index extends React.Component<{}, IIndexState> {
       JSON.parse(localStorage.getItem('transactions') || '{}');
     } else if (!authorization) {
       history.push({ pathname: '/login' });
+    } else {
+      API.fetchTransactions().then(res => {
+        this.setState({ transactions: res.data.transactions });
+      });
     }
   };
 }

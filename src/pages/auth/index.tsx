@@ -291,14 +291,15 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
           pathname: '/',
         });
       })
-      .catch(err =>
+      .catch(err => {
+        debugger;
         this.setState({
-          error: { message: err.response.data.error },
+          error: { message: err.data.error },
           password: '',
           passwordConfirm: '',
           isRegistering: false,
-        }),
-      );
+        });
+      });
   };
 }
 

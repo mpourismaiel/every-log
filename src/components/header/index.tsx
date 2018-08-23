@@ -16,7 +16,11 @@ class Header extends React.Component<{}, IHeaderState> {
 
   toggleCollapse = () => this.setState({ isOpen: !this.state.isOpen });
 
+  logout = () => localStorage.removeItem('authorization');
+
   render() {
+    const authorization = localStorage.getItem('authorization');
+
     return (
       <Navbar color="faded" light>
         <NavbarBrand href="/" className="mr-auto">
@@ -30,11 +34,19 @@ class Header extends React.Component<{}, IHeaderState> {
                 Dashboard
               </Link>
             </NavItem>
-            <NavItem>
-              <Link href="/login" className="nav-link">
-                Login/Register
-              </Link>
-            </NavItem>
+            {!authorization ? (
+              <NavItem>
+                <Link href="/login" className="nav-link">
+                  Login/Register
+                </Link>
+              </NavItem>
+            ) : (
+              <NavItem>
+                <Link href="/login" className="nav-link" onClick={this.logout}>
+                  Logout
+                </Link>
+              </NavItem>
+            )}
           </Nav>
         </Collapse>
       </Navbar>
