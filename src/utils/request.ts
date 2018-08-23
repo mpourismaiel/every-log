@@ -10,6 +10,7 @@ const axios = Axios.create({
 
 export const setToken = (token: string) => {
   localStorage.setItem('authorization', token);
+  localStorage.removeItem('isUsingAuth');
   axios.defaults.headers.authorization = token;
 };
 
