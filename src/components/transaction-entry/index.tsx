@@ -10,14 +10,16 @@ import { ITransaction } from '../../pages';
 export type TransactionType = 'outcome' | 'income';
 
 export interface ITransactionEntryProps {
-  show: boolean;
   hide: () => void;
   onSubmit: (data: ITransaction) => void;
+  onUpdate: (data: ITransaction) => void;
+  show: boolean;
+  transaction: ITransaction;
 }
 
 export interface ITransactionEntryState {
   category: string;
-  date: string;
+  date: number | string;
   description: string;
   expand: boolean;
   type: TransactionType;
@@ -63,15 +65,47 @@ class TransactionEntry extends React.Component<
 
   componentDidUpdate(prevProps: ITransactionEntryProps) {
     if (prevProps.show !== this.props.show) {
+      if (!prevProps.transaction && !!this.props.transaction) {
+        const {
+          category,
+          date,
+          description,
+          type,
+          price,
+        } = this.props.transaction;
+        return this.setState({
+          category,
+          date,
+          description,
+          type,
+          price: price.toString(),
+        });
+      }
       this.setState(TransactionEntry.InitialState);
     }
   }
 
   handleSubmit = e => {
     e.preventDefault();
+    if (this.props.transaction) {
+      return this.handleUpdate();
+    }
+
     const { category, description, type, price } = this.state;
     this.props.onSubmit({
       category,
+      description,
+      type,
+      price: parseInt(price.toString().replace(/,/g, ''), 10),
+    });
+    this.setState(TransactionEntry.InitialState);
+  };
+
+  handleUpdate = () => {
+    const { category, date, description, type, price } = this.state;
+    this.props.onUpdate({
+      category,
+      date: parseInt(date.toString(), 10),
       description,
       type,
       price: parseInt(price.toString().replace(/,/g, ''), 10),

@@ -24,8 +24,10 @@ import Transaction from '../components/transaction';
 import { prettifyPrice } from '../utils/string';
 import history from '../history';
 import { API } from '../utils/request';
+import { byKey } from '../utils/object';
 
 export interface ITransaction {
+  _id?: string;
   category: string;
   date?: number;
   description?: string;
@@ -34,6 +36,7 @@ export interface ITransaction {
 }
 
 export interface IIndexState {
+  editingTransactionId: string;
   exportOpen: boolean;
   height: number;
   transactionActions: string;
@@ -43,6 +46,7 @@ export interface IIndexState {
 
 class Index extends React.Component<{}, IIndexState> {
   state: IIndexState = {
+    editingTransactionId: null,
     exportOpen: false,
     height: 600,
     transactions: {},
@@ -138,11 +142,16 @@ class Index extends React.Component<{}, IIndexState> {
     }
   };
 
-  handleDelete = (key: string) => () => {
+  handleDelete = (id: string) => () => {
+    const authorization = localStorage.getItem('authorization');
+    if (authorization) {
+      API.deleteTransaction(this.state.transactions[id]._id);
+    }
+
     this.setState(
       {
         transactions: Object.keys(this.state.transactions)
-          .filter(k => k !== key)
+          .filter(key => key !== id)
           .reduce((tmp, k) => {
             tmp[k] = this.state.transactions[k];
             return tmp;
@@ -152,17 +161,21 @@ class Index extends React.Component<{}, IIndexState> {
     );
   };
 
-  handleTypeToggle = (key: string) => () => {
+  handleTypeToggle = (id: string) => () => {
+    const type =
+      this.state.transactions[id].type === 'income' ? 'outcome' : 'income';
+    const authorization = localStorage.getItem('authorization');
+    if (authorization) {
+      API.updateTransaction({ ...this.state.transactions[id], type });
+    }
+
     this.setState(
       {
         transactions: {
           ...this.state.transactions,
-          [key]: {
-            ...this.state.transactions[key],
-            type:
-              this.state.transactions[key].type === 'income'
-                ? 'outcome'
-                : 'income',
+          [id]: {
+            ...this.state.transactions[id],
+            type,
           },
         },
       },
@@ -170,10 +183,45 @@ class Index extends React.Component<{}, IIndexState> {
     );
   };
 
-  handleActionsToggle = key => () =>
+  handleActionsToggle = (id: string) => () =>
     this.setState({
-      transactionActions: this.state.transactionActions === key ? null : key,
+      transactionActions: this.state.transactionActions === id ? null : id,
     });
+
+  handleEditStart = (id: string) => () =>
+    this.setState({ editingTransactionId: id, showAddTransaction: true });
+  handleUpdate = (id: string) => (data: ITransaction) => {
+    if (!id) {
+      return;
+    }
+
+    const authorization = localStorage.getItem('authorization');
+    if (authorization) {
+      API.updateTransaction({
+        _id: this.state.transactions[id]._id,
+        ...data,
+      }).then(resp => {
+        this.setState({
+          transactions: {
+            ...this.state.transactions,
+            [resp.data.date]: resp.data,
+          },
+          showAddTransaction: false,
+        });
+      });
+    } else {
+      const transactions = { ...this.state.transactions };
+      if (!!data) {
+        transactions[id] = data;
+      }
+
+      this.setState({
+        editingTransactionId: null,
+        showAddTransaction: false,
+        transactions,
+      });
+    }
+  };
 
   render() {
     const { transactions } = this.state;
@@ -200,7 +248,7 @@ class Index extends React.Component<{}, IIndexState> {
                 onDelete={this.handleDelete(key)}
                 onTypeToggle={this.handleTypeToggle(key)}
                 onDateChange={() => null}
-                onEditRequest={() => null}
+                onEditRequest={this.handleEditStart(key)}
                 onActionsToggle={this.handleActionsToggle(key)}
                 isActionsOpen={this.state.transactionActions === key}
                 transaction={transactions[key]}
@@ -237,11 +285,27 @@ class Index extends React.Component<{}, IIndexState> {
             className={classNames('overlay', {
               show: this.state.showAddTransaction,
             })}
-            onClick={() => this.setState({ showAddTransaction: false })}
+            onClick={() =>
+              this.setState({
+                showAddTransaction: false,
+                editingTransactionId: null,
+              })
+            }
           />
           <TransactionEntry
             show={this.state.showAddTransaction}
-            hide={() => this.setState({ showAddTransaction: false })}
+            hide={() =>
+              this.setState({
+                showAddTransaction: false,
+                editingTransactionId: null,
+              })
+            }
+            transaction={
+              this.state.editingTransactionId
+                ? this.state.transactions[this.state.editingTransactionId]
+                : null
+            }
+            onUpdate={this.handleUpdate(this.state.editingTransactionId)}
             onSubmit={this.handleSubmit}
           />
         </Row>
@@ -258,7 +322,7 @@ class Index extends React.Component<{}, IIndexState> {
       history.push({ pathname: '/login' });
     } else {
       API.fetchTransactions().then(res => {
-        this.setState({ transactions: res.data.transactions });
+        this.setState({ transactions: byKey(res.data.transactions, 'date') });
       });
     }
   };
