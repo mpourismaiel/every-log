@@ -84,7 +84,7 @@ class Transaction extends React.PureComponent<
             <Row className="justify-content-between text-info pt-1 meta">
               <span className="my-0 category col">{category}</span>
               <span className="date col-auto">
-                {formatDate(new Date(date), '%y-%m-%d %H:%M')}
+                {formatDate(new Date(date), '%y-%mm-%0d %HH:%MM')}
               </span>
             </Row>
           </Col>
