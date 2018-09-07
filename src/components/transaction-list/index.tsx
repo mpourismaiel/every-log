@@ -38,7 +38,7 @@ const TransactionList: React.SFC<ITransactionListProps> = ({
         ) {
           returnee.push(
             <Row
-              className="mx-0 date-group justify-content-center"
+              className="mx-0 date-group justify-content-start"
               key={`group-date-${key}`}>
               <span>
                 {relativeDate(new Date(transaction.date), '%y-%mm-%0d')}
