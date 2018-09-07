@@ -32,6 +32,34 @@ const create = (req, res) => {
     .catch(err => res.status(500).json(error(err)));
 };
 
+const importTransactions = (req, res) => {
+  let priceError = false;
+  const data = req.body.map(transaction => {
+    const { price, description, type, category, date } = transaction;
+    const { _id } = req.user;
+    if (!price) {
+      priceError = true;
+    }
+
+    return {
+      price,
+      description,
+      type,
+      category: category || 'No Category',
+      date: date || Date.now(),
+      user: _id,
+    };
+  });
+
+  if (priceError) {
+    return res.status(403).json(error('Price cannot be empty'));
+  }
+
+  models.Transaction.create(data)
+    .then(result => res.status(200).json(result))
+    .catch(err => res.status(500).json(error(err)));
+};
+
 const update = (where: 'body' | 'params') => (req, res) => {
   const { price, description, type, category, date } = req.body;
   if (!price) {
@@ -63,6 +91,10 @@ export default apiRouter => {
     .post(isLoggedIn(), create)
     .put(isLoggedIn(), update('body'))
     .delete(isLoggedIn(), deleteOne('body'));
+
+  apiRouter
+    .route('/transactions-import')
+    .post(isLoggedIn(), importTransactions);
 
   apiRouter
     .route('/transactions/:_id')

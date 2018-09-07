@@ -16,7 +16,10 @@ class Header extends React.Component<{}, IHeaderState> {
 
   toggleCollapse = () => this.setState({ isOpen: !this.state.isOpen });
 
-  logout = () => localStorage.removeItem('authorization');
+  logout = () => {
+    localStorage.removeItem('authorization');
+    localStorage.removeItem('transactions');
+  };
 
   render() {
     const authorization = localStorage.getItem('authorization');

@@ -274,27 +274,45 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
       );
   };
 
+  private resetForm = () =>
+    this.setState({
+      email: '',
+      error: {},
+      password: '',
+      isRegistering: false,
+    });
+
   private handleRegister = () => {
     const { email, password, passwordConfirm } = this.state;
-
     this.setState({ isRegistering: true });
     API.register({ email, password, passwordConfirm })
       .then(response => {
-        this.setState({
-          email: '',
-          error: {},
-          password: '',
-          isRegistering: false,
-        });
         setToken(response.data.token);
-        history.push({
-          pathname: '/',
-        });
+        const transactions = JSON.parse(localStorage.getItem('transactions'));
+        if (transactions) {
+          const upload = confirm(
+            'Do you want to upload your previous transactions? If not previous transactions will be deleted.',
+          );
+          if (upload) {
+            API.importTransactions(
+              Object.keys(transactions).map(key => transactions[key]),
+            ).then(() => {
+              this.resetForm();
+              history.push({
+                pathname: '/',
+              });
+            });
+          } else {
+            this.resetForm();
+            history.push({
+              pathname: '/',
+            });
+          }
+        }
       })
       .catch(err => {
-        debugger;
         this.setState({
-          error: { message: err.data.error },
+          error: { message: err.response.data.error },
           password: '',
           passwordConfirm: '',
           isRegistering: false,

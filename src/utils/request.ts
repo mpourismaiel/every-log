@@ -24,6 +24,8 @@ export const API = {
   }) => axios.post('/user/signup', data),
   fetchTransactions: () => axios.get('/transactions'),
   createTransaction: (data: ITransaction) => axios.post('/transactions', data),
+  importTransactions: (data: ITransaction[]) =>
+    axios.post('/transactions-import', data),
   updateTransaction: (data: ITransaction) => axios.put('/transactions', data),
   deleteTransaction: (id: string) => axios.delete(`/transactions/${id}`),
 };
