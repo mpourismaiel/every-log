@@ -18,6 +18,6 @@ app.use(
 app.use(bodyParser.json());
 registerRoutes(app);
 
-app.listen(3001, () => {
+app.listen(3001, process.env.hostname || '0.0.0.0', () => {
   console.log('CORS-enabled web server listening on port 3001');
 });

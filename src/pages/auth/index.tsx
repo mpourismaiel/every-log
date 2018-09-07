@@ -311,8 +311,17 @@ class Auth extends React.Component<IAuthProps, IAuthState> {
         }
       })
       .catch(err => {
+        let message = 'Something happenned';
+        if (
+          err &&
+          err.response &&
+          err.response.data &&
+          err.response.data.error
+        ) {
+          message = err.response.data.error;
+        }
         this.setState({
-          error: { message: err.response.data.error },
+          error: { message },
           password: '',
           passwordConfirm: '',
           isRegistering: false,
