@@ -58,7 +58,7 @@ class Index extends React.Component<{}, IIndexState> {
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
-    this.fillStorage();
+    this.fetchTransactions();
     this.handleResize();
   }
 
@@ -325,7 +325,7 @@ class Index extends React.Component<{}, IIndexState> {
     });
   };
 
-  private fillStorage = () => {
+  private fetchTransactions = () => {
     const authorization = localStorage.getItem('authorization');
     const isUsingAuth = localStorage.getItem('isUsingAuth');
     if (isUsingAuth === 'false') {
