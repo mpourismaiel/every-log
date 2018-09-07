@@ -1,14 +1,14 @@
 const daysOfWeek = [
+  'Sunday',
   'Monday',
   'Tuesday',
   'Wednesday',
   'Thursday',
   'Friday',
   'Saturday',
-  'Sunday',
 ];
 
-export const formatDate = (date: Date, format: string) => {
+export const formatDate = (date: Date, format: string): string => {
   return format
     .replace(/%dd/g, daysOfWeek[date.getDay()])
     .replace(/%d/g, date.getDate().toString())
@@ -21,8 +21,8 @@ export const formatDate = (date: Date, format: string) => {
     .replace(
       /%mm/g,
       date.getMonth().toString().length === 1
-        ? '0' + date.getMonth()
-        : date.getMonth().toString(),
+        ? '0' + (date.getMonth() + 1)
+        : (date.getMonth() + 1).toString(),
     )
     .replace(/%m/g, (date.getMonth() + 1).toString())
     .replace(/%y/g, date.getFullYear().toString())
@@ -47,4 +47,19 @@ export const formatDate = (date: Date, format: string) => {
         : date.getSeconds().toString(),
     )
     .replace(/%S/g, date.getSeconds().toString());
+};
+
+export const relativeDate = (date: Date, format: string): string => {
+  const dateUnix = date.valueOf();
+  const todayUnix = new Date().setHours(0, 0, 0).valueOf();
+  const day = 1000 * 60 * 60 * 24;
+  if (dateUnix > todayUnix) {
+    return 'Today';
+  } else if (dateUnix > todayUnix - day) {
+    return 'Yesterday';
+  } else if (dateUnix > todayUnix - day * 6) {
+    return formatDate(date, '%dd');
+  } else {
+    return formatDate(date, format);
+  }
 };

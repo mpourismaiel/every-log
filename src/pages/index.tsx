@@ -20,11 +20,11 @@ import { formatDate } from '../utils/date';
 import TransactionsSummary from '../components/transactions-summary';
 import Header from '../components/header';
 import './styles.scss';
-import Transaction from '../components/transaction';
 import { prettifyPrice } from '../utils/string';
 import history from '../history';
 import { API } from '../utils/request';
 import { byKey } from '../utils/object';
+import TransactionList from '../components/transaction-list';
 
 export interface ITransaction {
   _id?: string;
@@ -247,19 +247,14 @@ class Index extends React.Component<{}, IIndexState> {
         <Row className="px-0 scrollable">
           <Col>
             <TransactionsSummary totalTransactions={totalTransactions} />
-            {Object.keys(transactions).map(key => (
-              <Transaction
-                key={key}
-                createdAt={key}
-                onDelete={this.handleDelete(key)}
-                onTypeToggle={this.handleTypeToggle(key)}
-                onDateChange={() => null}
-                onEditRequest={this.handleEditStart(key)}
-                onActionsToggle={this.handleActionsToggle(key)}
-                isActionsOpen={this.state.transactionActions === key}
-                transaction={transactions[key]}
-              />
-            ))}
+            <TransactionList
+              handleActionsToggle={this.handleActionsToggle}
+              handleDelete={this.handleDelete}
+              handleEditStart={this.handleEditStart}
+              handleTypeToggle={this.handleTypeToggle}
+              transactionActions={this.state.transactionActions}
+              transactions={transactions}
+            />
             <Row className="justify-content-between cards mx-0 mb-2">
               <Card color="secondary" className="border-0">
                 <CardTitle>Income</CardTitle>
