@@ -117,13 +117,16 @@ class Index extends React.Component<{}, IIndexState> {
         ...data,
         date: Date.now(),
       }).then(resp => {
-        this.setState({
-          transactions: {
-            ...this.state.transactions,
-            [resp.data.date]: resp.data,
+        this.setState(
+          {
+            transactions: {
+              ...this.state.transactions,
+              [resp.data.date]: resp.data,
+            },
+            showAddTransaction: false,
           },
-          showAddTransaction: false,
-        });
+          this.sortTransactions,
+        );
       });
     } else {
       this.setState(
@@ -137,7 +140,10 @@ class Index extends React.Component<{}, IIndexState> {
           },
           showAddTransaction: false,
         },
-        this.saveToStorage,
+        () => {
+          this.saveToStorage();
+          this.sortTransactions();
+        },
       );
     }
   };
@@ -313,16 +319,39 @@ class Index extends React.Component<{}, IIndexState> {
     );
   }
 
+  private sortTransactions = () => {
+    this.setState({
+      transactions: byKey(
+        Object.keys(this.state.transactions)
+          .map(key => this.state.transactions[key])
+          .sort((a, b) => (a.date < b.date ? 1 : -1)),
+        'date',
+      ),
+    });
+  };
+
   private fillStorage = () => {
     const authorization = localStorage.getItem('authorization');
     const isUsingAuth = localStorage.getItem('isUsingAuth');
     if (isUsingAuth === 'false') {
-      JSON.parse(localStorage.getItem('transactions') || '{}');
+      this.setState(
+        {
+          transactions: JSON.parse(
+            localStorage.getItem('transactions') || '{}',
+          ),
+        },
+        this.sortTransactions,
+      );
     } else if (!authorization) {
       history.push({ pathname: '/login' });
     } else {
       API.fetchTransactions().then(res => {
-        this.setState({ transactions: byKey(res.data.transactions, 'date') });
+        this.setState(
+          {
+            transactions: byKey(res.data.transactions, 'date'),
+          },
+          this.sortTransactions,
+        );
       });
     }
   };
