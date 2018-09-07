@@ -37,7 +37,9 @@ const TransactionList: React.SFC<ITransactionListProps> = ({
             ).getDay()
         ) {
           returnee.push(
-            <Row className="mx-0 date-group justify-content-center">
+            <Row
+              className="mx-0 date-group justify-content-center"
+              key={`group-date-${key}`}>
               <span>
                 {relativeDate(new Date(transaction.date), '%y-%mm-%0d')}
               </span>
@@ -46,7 +48,7 @@ const TransactionList: React.SFC<ITransactionListProps> = ({
         }
         returnee.push(
           <Transaction
-            key={key}
+            key={`transaction-${key}`}
             createdAt={key}
             onDelete={handleDelete(key)}
             onTypeToggle={handleTypeToggle(key)}
