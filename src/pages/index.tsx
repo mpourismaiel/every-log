@@ -10,7 +10,7 @@ import {
   CardTitle,
   CardBody,
 } from 'reactstrap';
-import { PlusCircle } from 'react-feather';
+import { ChevronUp } from 'react-feather';
 
 import { IDictionary } from '../types';
 import TransactionEntry, {
@@ -133,7 +133,9 @@ class Index extends React.Component<{}, IIndexState> {
         {
           transactions: {
             ...this.state.transactions,
-            [Date.now()]: {
+            [this.state.editingTransactionId
+              ? this.state.transactions[this.state.editingTransactionId].date
+              : Date.now()]: {
               ...data,
               date: Date.now(),
             },
@@ -280,7 +282,7 @@ class Index extends React.Component<{}, IIndexState> {
             color="primary"
             className="transaction-add w-100 rounded-0 py-3"
             onClick={() => this.setState({ showAddTransaction: true })}>
-            <PlusCircle />
+            <ChevronUp color="#fff" />
           </Button>
           <div
             className={classNames('overlay', {

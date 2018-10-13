@@ -1,11 +1,12 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Collapse, Input, Row, Col, FormGroup } from 'reactstrap';
-import { ChevronUp, Check, Delete, Plus, Minus, X } from 'react-feather';
+import { Check, Delete, Plus, Minus, ChevronDown } from 'react-feather';
 
 import { prettifyPrice } from '../../utils/string';
 import './styles.scss';
 import { ITransaction } from '../../pages';
+import Transaction from '../transaction';
 
 export type TransactionType = 'outcome' | 'income';
 
@@ -21,7 +22,8 @@ export interface ITransactionEntryState {
   category: string;
   date: number | string;
   description: string;
-  expand: boolean;
+  isMetaOpen: boolean;
+  isCategoryOpen: boolean;
   type: TransactionType;
   price: string;
 }
@@ -49,11 +51,12 @@ class TransactionEntry extends React.Component<
 > {
   static InitialState: ITransactionEntryState = {
     category: categories[0].title,
-    date: '',
+    date: Date.now(),
     description: '',
-    expand: false,
+    isMetaOpen: false,
     type: 'outcome',
     price: '',
+    isCategoryOpen: false,
   };
   state: ITransactionEntryState = TransactionEntry.InitialState;
 
@@ -133,8 +136,25 @@ class TransactionEntry extends React.Component<
       value = value.target.value;
     }
 
+    if (key === 'category' && this.state.category === value) {
+      this.setState({ isCategoryOpen: false })
+      return false;
+    }
+
     this.setState({ [key]: value } as any);
   };
+
+  toggleCategory = () =>
+    this.setState({
+      isCategoryOpen: !this.state.isCategoryOpen,
+      isMetaOpen: false,
+    });
+
+  toggleMeta = () =>
+    this.setState({
+      isCategoryOpen: false,
+      isMetaOpen: !this.state.isMetaOpen,
+    });
 
   switchType = () =>
     this.setState({
@@ -157,36 +177,50 @@ class TransactionEntry extends React.Component<
       <div
         className={classNames('transaction-entry position-fixed m-0', {
           show: this.props.show,
-          expand: this.state.expand,
         })}
         ref={node => (this.node = node)}>
         <Col xs="12">
           <Row className="justify-content-center pt-2 pb-1">
-            <ChevronUp
-              color="#fff"
-              onClick={() => this.setState({ expand: !this.state.expand })}
-            />
+            <ChevronDown color="#fff" onClick={this.props.hide} />
           </Row>
-          <Row className="justify-content-between flex-nowrap overflow-x">
-            {categories.map(category => {
-              if (category.hide) {
-                return null;
-              }
+          <Transaction
+            isActionsOpen={false}
+            onActionsToggle={() => null}
+            onDateChange={() => null}
+            onDelete={() => null}
+            onEditRequest={() => null}
+            onTypeToggle={() => null}
+            onCategoryClick={this.toggleCategory}
+            onMetaClick={this.toggleMeta}
+            createdAt={Date.now()}
+            transaction={(this.state as any) as ITransaction}
+          />
+          <Collapse isOpen={this.state.isCategoryOpen}>
+            <Col className="justify-content-between flex-nowrap overflow-x mb-3">
+              {categories.map(category => {
+                if (category.hide) {
+                  return null;
+                }
 
-              return (
-                <Col
-                  key={category.title}
-                  onClick={() => this.handleChange('category')(category.title)}
-                  className={classNames('category text-white', {
-                    active: this.state.category === category.title,
-                  })}>
-                  <span className="material-icons">{category.icon}</span>
-                  <span className="mt-1 title">{category.title}</span>
-                </Col>
-              );
-            })}
-          </Row>
-          <Collapse isOpen={this.state.expand} className="px-0 form-container">
+                return (
+                  <Row
+                    key={category.title}
+                    onClick={() =>
+                      this.handleChange('category')(category.title)
+                    }
+                    className={classNames('category text-white w-100 m-0', {
+                      active: this.state.category === category.title,
+                    })}>
+                    <span className="material-icons col-auto">{category.icon}</span>
+                    <span className="mt-1 title col">{category.title}</span>
+                  </Row>
+                );
+              })}
+            </Col>
+          </Collapse>
+          <Collapse
+            isOpen={this.state.isMetaOpen}
+            className="px-0 form-container">
             <FormGroup>
               <Input
                 id="description"
@@ -203,52 +237,49 @@ class TransactionEntry extends React.Component<
               />
             </FormGroup>
           </Collapse>
-          <Row className="justify-content-center align-items-center price-input position-relative">
-            <Row className="mx-0 py-0 pb-2 text-center">
-              <div
-                className={classNames('sign-container', {
-                  'show-income': this.state.type === 'income',
-                })}>
-                <Plus className="sign income" color="#fff" />
-                <Minus className="sign outcome" color="#fff" />
-              </div>
-              {prettifyPrice(this.state.price) || '0'}
+          <Collapse
+            isOpen={!this.state.isCategoryOpen && !this.state.isMetaOpen}>
+            <Row className="justify-content-center align-items-center price-input position-relative">
+              <Row className="mx-0 py-0 pb-2 text-center">
+                <div
+                  className={classNames('sign-container', {
+                    'show-income': this.state.type === 'income',
+                  })}>
+                  <Plus className="sign income" color="#fff" />
+                  <Minus className="sign outcome" color="#fff" />
+                </div>
+                {prettifyPrice(this.state.price) || '0'}
+              </Row>
+              {this.state.price && (
+                <div
+                  className="position-absolute backspace"
+                  onClick={() => this.handleChange('price')('backspace')}>
+                  <Delete color="#fff" />
+                </div>
+              )}
             </Row>
-            {this.state.price ? (
-              <div
-                className="position-absolute backspace"
-                onClick={() => this.handleChange('price')('backspace')}>
-                <Delete color="#fff" />
-              </div>
-            ) : (
-              <div
-                className="position-absolute backspace"
-                onClick={this.props.hide}>
-                <X color="#fff" />
-              </div>
-            )}
-          </Row>
-          <Col className="px-0 numbers-container">
-            <Row>{this.renderNumbers(1, 2, 3)}</Row>
-            <Row>{this.renderNumbers(4, 5, 6)}</Row>
-            <Row>{this.renderNumbers(7, 8, 9)}</Row>
-            <Row>
-              <Col
-                className={classNames(
-                  'number sign text-center text-white p-2 m-2',
-                  { active: this.state.type === 'income' },
-                )}
-                onClick={this.switchType}>
-                <Plus color="#fff" />
-              </Col>
-              {this.renderNumbers(0)}
-              <Col
-                className="number sign text-center text-white p-2 m-2"
-                onClick={this.handleSubmit}>
-                <Check color="#fff" />
-              </Col>
-            </Row>
-          </Col>
+            <Col className="px-0 numbers-container">
+              <Row>{this.renderNumbers(1, 2, 3)}</Row>
+              <Row>{this.renderNumbers(4, 5, 6)}</Row>
+              <Row>{this.renderNumbers(7, 8, 9)}</Row>
+              <Row>
+                <Col
+                  className={classNames(
+                    'number sign text-center text-white p-2 m-2',
+                    { active: this.state.type === 'income' },
+                  )}
+                  onClick={this.switchType}>
+                  <Plus color="#fff" />
+                </Col>
+                {this.renderNumbers(0)}
+                <Col
+                  className="number sign text-center text-white p-2 m-2"
+                  onClick={this.handleSubmit}>
+                  <Check color="#fff" />
+                </Col>
+              </Row>
+            </Col>
+          </Collapse>
         </Col>
       </div>
     );

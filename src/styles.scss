@@ -5,6 +5,10 @@ $danger: #d85d5f;
 $info: rgba(0, 0, 0, 0.2);
 @import 'bootstrap/scss/bootstrap.scss';
 
+::placeholder {
+  color: white;
+}
+
 body {
   margin: 0;
   padding: 0;

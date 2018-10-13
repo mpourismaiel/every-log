@@ -16,7 +16,9 @@ export interface ITransactionProps {
   onTypeToggle: () => void;
   onDateChange: () => void;
   onEditRequest: () => void;
-  onActionsToggle;
+  onCategoryClick?: () => void;
+  onMetaClick?: () => void;
+  onActionsToggle: any;
   transaction: ITransaction;
 }
 
@@ -55,7 +57,10 @@ class Transaction extends React.PureComponent<
         })}
         onClick={this.props.onActionsToggle}>
         <Row className="mx-0 normal">
-          <Col xs="auto" className="icon">
+          <Col
+            xs="auto"
+            className="icon"
+            onClick={this.props.onCategoryClick || (() => null)}>
             <span className="material-icons">
               {
                 (
@@ -65,7 +70,7 @@ class Transaction extends React.PureComponent<
               }
             </span>
           </Col>
-          <Col>
+          <Col onClick={this.props.onMetaClick || (() => null)}>
             <Row className="justify-content-between align-items-end pb-1 main mx-0">
               <h6
                 className={classNames('my-0 px-0 col title', {
@@ -78,11 +83,11 @@ class Transaction extends React.PureComponent<
                   'text-success': type === 'income',
                 })}>
                 {type === 'income' ? '+' : '-'}
-                {prettifyPrice(price)}
+                {prettifyPrice(price) || '0'}
               </h5>
             </Row>
             <Row className="justify-content-between text-info pt-1 meta">
-              <span className="my-0 category col">{category}</span>
+              <span className="my-0 category-display col">{category}</span>
               <span className="date col-auto">
                 {formatDate(new Date(date), '%y-%mm-%0d %HH:%MM')}
               </span>

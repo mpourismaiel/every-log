@@ -5,7 +5,7 @@
   bottom: 0;
   left: 0;
   width: 100vw;
-  height: 0;
+  max-height: 0;
   background: linear-gradient(#D85D5F 0%, #E84670 100%);
   box-shadow: 0 0 30px rgba(216, 93, 95, 0.7);
   overflow-y: auto;
@@ -13,11 +13,7 @@
   z-index: 1100;
 
   &.show {
-    height: 440px;
-  }
-
-  &.expand {
-    height: 100vh;
+    max-height: 100%;
   }
 
   .backspace {
@@ -101,12 +97,10 @@
   }
 
   .category {
-    width: 80px;
-    height: 64px;
+    height: 48px;
     flex: 0 0 auto;
     padding: 0;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     transition: all 0.2s ease-out;
@@ -125,9 +119,12 @@
 
     .title {
       font-size: 14px;
-      text-align: center;
       width: 100%;
       display: block;
     }
+  }
+
+  .transaction {
+    color: white;
   }
 }
