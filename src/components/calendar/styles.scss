@@ -1,0 +1,19 @@
+.calendar {
+  .day {
+    .date {
+      display: flex;
+      flex-direction: column;
+      width: 64px;
+      flex: 0 0 auto;
+      align-items: center;
+
+      &-number {
+        font-size: 1.5rem;
+      }
+
+      &-name {
+        font-size: 0.9rem;
+      }
+    }
+  }
+}

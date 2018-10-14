@@ -51,7 +51,7 @@ class Index extends React.Component<{}, IIndexState> {
     height: 600,
     transactions: {},
     transactionActions: null,
-    showAddTransaction: false,
+    showAddTransaction: true,
   };
 
   private fileInput: HTMLInputElement;

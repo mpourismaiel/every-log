@@ -4,9 +4,10 @@ import { Collapse, Input, Row, Col, FormGroup } from 'reactstrap';
 import { Check, Delete, Plus, Minus, ChevronDown } from 'react-feather';
 
 import { prettifyPrice } from '../../utils/string';
-import './styles.scss';
 import { ITransaction } from '../../pages';
 import Transaction from '../transaction';
+import Calendar from '../calendar';
+import './styles.scss';
 
 export type TransactionType = 'outcome' | 'income';
 
@@ -53,7 +54,7 @@ class TransactionEntry extends React.Component<
     category: categories[0].title,
     date: Date.now(),
     description: '',
-    isMetaOpen: false,
+    isMetaOpen: true,
     type: 'outcome',
     price: '',
     isCategoryOpen: false,
@@ -137,7 +138,7 @@ class TransactionEntry extends React.Component<
     }
 
     if (key === 'category' && this.state.category === value) {
-      this.setState({ isCategoryOpen: false })
+      this.setState({ isCategoryOpen: false });
       return false;
     }
 
@@ -211,7 +212,9 @@ class TransactionEntry extends React.Component<
                     className={classNames('category text-white w-100 m-0', {
                       active: this.state.category === category.title,
                     })}>
-                    <span className="material-icons col-auto">{category.icon}</span>
+                    <span className="material-icons col-auto">
+                      {category.icon}
+                    </span>
                     <span className="mt-1 title col">{category.title}</span>
                   </Row>
                 );
@@ -230,11 +233,7 @@ class TransactionEntry extends React.Component<
               />
             </FormGroup>
             <FormGroup>
-              <Input
-                id="date"
-                placeholder="Date: Today"
-                onChange={this.handleChange('date')}
-              />
+              <Calendar />
             </FormGroup>
           </Collapse>
           <Collapse

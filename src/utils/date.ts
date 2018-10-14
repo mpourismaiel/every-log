@@ -8,7 +8,27 @@ const daysOfWeek = [
   'Saturday',
 ];
 
+const months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 export const formatDate = (date: Date, format: string): string => {
+  const firstDayOfTheMonth = new Date(date);
+  firstDayOfTheMonth.setDate(1);
+  const weekNumber =
+    Math.floor((firstDayOfTheMonth.getDay() + date.getDate() - 1) / 7) + 1;
+
   return format
     .replace(/%dd/g, daysOfWeek[date.getDay()])
     .replace(/%d/g, date.getDate().toString())
@@ -18,6 +38,8 @@ export const formatDate = (date: Date, format: string): string => {
         ? '0' + date.getDate()
         : date.getDate().toString(),
     )
+    .replace(/%w/g, weekNumber.toString())
+    .replace(/%mmm/g, months[date.getMonth()])
     .replace(
       /%mm/g,
       date.getMonth().toString().length === 1

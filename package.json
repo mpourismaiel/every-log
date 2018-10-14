@@ -50,6 +50,7 @@
     "react-dev-utils": "^5.0.1",
     "react-dom": "^16.4.1",
     "react-feather": "^1.1.1",
+    "react-jdate-picker": "^0.5.1",
     "react-vis": "^1.10.4",
     "reactstrap": "^6.3.0",
     "resolve": "1.6.0",
