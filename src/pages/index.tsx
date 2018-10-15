@@ -58,6 +58,7 @@ export interface IIndexState {
   height: number;
   transactionActions: string;
   showAddTransaction: boolean;
+  isEditingMeta: boolean;
 }
 
 class Index extends React.Component<IIndexProps, IIndexState> {
@@ -67,6 +68,7 @@ class Index extends React.Component<IIndexProps, IIndexState> {
     height: 600,
     transactionActions: null,
     showAddTransaction: false,
+    isEditingMeta: false,
   };
 
   componentDidMount() {
@@ -95,12 +97,14 @@ class Index extends React.Component<IIndexProps, IIndexState> {
         this.props.addTransaction(resp.data);
         this.setState({
           showAddTransaction: false,
+          isEditingMeta: false,
         });
       });
     } else {
       this.props.addTransaction(data);
       this.setState({
         showAddTransaction: false,
+        isEditingMeta: false,
       });
     }
   };
@@ -112,6 +116,14 @@ class Index extends React.Component<IIndexProps, IIndexState> {
     }
 
     this.props.deleteTransaction(id);
+  };
+
+  handleDateChange = (id: string) => () => {
+    this.setState({
+      editingTransactionId: id,
+      showAddTransaction: true,
+      isEditingMeta: true,
+    });
   };
 
   handleTypeToggle = (id: string) => () => {
@@ -149,6 +161,7 @@ class Index extends React.Component<IIndexProps, IIndexState> {
       this.setState({
         editingTransactionId: null,
         showAddTransaction: false,
+        isEditingMeta: false,
       });
       this.props.updateTransaction(data, id);
     }
@@ -178,6 +191,7 @@ class Index extends React.Component<IIndexProps, IIndexState> {
               handleEditStart={this.handleEditStart}
               handleTypeToggle={this.handleTypeToggle}
               transactionActions={this.state.transactionActions}
+              handleDateChange={this.handleDateChange}
               transactions={transactions}
             />
             <Row className="justify-content-between cards  mx-0 mb-2">
@@ -224,6 +238,7 @@ class Index extends React.Component<IIndexProps, IIndexState> {
           />
           <TransactionEntry
             show={this.state.showAddTransaction}
+            showMeta={this.state.isEditingMeta}
             hide={() =>
               this.setState({
                 showAddTransaction: false,

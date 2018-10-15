@@ -85,3 +85,12 @@ export const relativeDate = (date: Date, format: string): string => {
     return formatDate(date, format);
   }
 };
+
+export const isSameDay = (date1: Date | number, date2: Date | number) => {
+  const startOfDay = new Date(date1);
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(date1);
+  endOfDay.setHours(24, 59, 59, 99);
+  const date = new Date(date2).valueOf();
+  return startOfDay.valueOf() < date && date < endOfDay.valueOf();
+};

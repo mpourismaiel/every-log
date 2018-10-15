@@ -13,12 +13,14 @@ export interface ITransactionListProps {
   handleTypeToggle: typeof Index.prototype.handleTypeToggle;
   handleEditStart: typeof Index.prototype.handleEditStart;
   handleActionsToggle: typeof Index.prototype.handleActionsToggle;
+  handleDateChange: typeof Index.prototype.handleDateChange;
   transactionActions: string;
 }
 
 const TransactionList: React.SFC<ITransactionListProps> = ({
   transactions,
   handleDelete,
+  handleDateChange,
   handleTypeToggle,
   handleEditStart,
   handleActionsToggle,
@@ -52,7 +54,7 @@ const TransactionList: React.SFC<ITransactionListProps> = ({
             createdAt={key}
             onDelete={handleDelete(key)}
             onTypeToggle={handleTypeToggle(key)}
-            onDateChange={() => null}
+            onDateChange={handleDateChange(key)}
             onEditRequest={handleEditStart(key)}
             onActionsToggle={handleActionsToggle(key)}
             isActionsOpen={transactionActions === key}

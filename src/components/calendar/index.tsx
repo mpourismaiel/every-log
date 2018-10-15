@@ -1,13 +1,27 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import BaseCalendar from 'react-jdate-picker/build/base-calendar';
 import { Col, Row } from 'reactstrap';
 
-import { formatDate } from 'src/utils/date';
+import { formatDate, isSameDay } from 'src/utils/date';
 import './styles.scss';
 import { ChevronLeft, ChevronRight } from 'react-feather';
+import { IState } from 'src/store';
+import { IDictionary } from 'src/types';
+import { ITransaction } from 'src/pages';
+import { prettifyPrice } from 'src/utils/string';
 
-class Calendar extends React.PureComponent {
-  state = {
+export interface ICalendarProps {
+  transactions: IDictionary<ITransaction>;
+  handleDateClick: (day: Date) => void;
+}
+
+export interface ICalendarState {
+  day: number;
+}
+
+class Calendar extends React.Component<ICalendarProps, ICalendarState> {
+  state: ICalendarState = {
     day: Date.now(),
   };
 
@@ -31,23 +45,38 @@ class Calendar extends React.PureComponent {
     );
   }
 
-  renderDay(day, i) {
+  getPrice = (transactions: IDictionary<ITransaction>, day: Date) => {
+    const price = Object.keys(transactions)
+      .filter(key => isSameDay(transactions[key].date, day))
+      .reduce((tmp, key) => {
+        const transaction = transactions[key];
+        return (
+          tmp + transaction.price * (transaction.type === 'income' ? 1 : -1)
+        );
+      }, 0);
+    return (price > 0 ? '+' : '-') + (prettifyPrice(price) || '0');
+  };
+
+  renderDay = transactions => (day, i) => {
+    if (!day) {
+      return null;
+    }
+
     return (
       <Row
         key={`day-${Math.random() * 1000000}`}
-        className="day text-center text-white py-2 mx-0">
-        {day && (
-          <>
-            <Col className="date">
-              <span className="date-number">{formatDate(day, '%0d')}</span>
-              <span className="date-name">{formatDate(day, '%dd')}</span>
-            </Col>
-            <Row />
-          </>
-        )}
+        onClick={() => this.props.handleDateClick(day.valueOf())}
+        className="day text-center text-white py-2 mx-0 justify-content-between align-items-end">
+        <Col className="date">
+          <span className="date-number">{formatDate(day, '%0d')}</span>
+          <span className="date-name">{formatDate(day, '%dd')}</span>
+        </Col>
+        <Row className="date-price mx-0">
+          {this.getPrice(transactions, day)}
+        </Row>
       </Row>
     );
-  }
+  };
 
   group = () => {
     const tmpDate = new Date(this.state.day);
@@ -78,7 +107,7 @@ class Calendar extends React.PureComponent {
         </Row>
         <BaseCalendar
           month={this.state.day}
-          renderDay={this.renderDay}
+          renderDay={this.renderDay(this.props.transactions)}
           renderGroup={this.renderGroup}
           group={this.group}
         />
@@ -87,4 +116,6 @@ class Calendar extends React.PureComponent {
   }
 }
 
-export default Calendar;
+export default connect((state: IState) => ({
+  transactions: state.transactions,
+}))(Calendar);

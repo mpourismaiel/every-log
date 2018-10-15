@@ -1,9 +1,11 @@
 .calendar {
   .day {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+
     .date {
       display: flex;
       flex-direction: column;
-      width: 64px;
+      width: 72px;
       flex: 0 0 auto;
       align-items: center;
 
@@ -13,6 +15,10 @@
 
       &-name {
         font-size: 0.9rem;
+      }
+
+      &-price {
+        font-size: 1.2rem;
       }
     }
   }

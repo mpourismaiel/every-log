@@ -17,6 +17,7 @@ export interface ITransactionEntryProps {
   onUpdate: (data: ITransaction) => void;
   show: boolean;
   transaction: ITransaction;
+  showMeta: boolean;
 }
 
 export interface ITransactionEntryState {
@@ -59,7 +60,11 @@ class TransactionEntry extends React.Component<
     price: '',
     isCategoryOpen: false,
   };
-  state: ITransactionEntryState = TransactionEntry.InitialState;
+
+  state: ITransactionEntryState = {
+    ...TransactionEntry.InitialState,
+    isMetaOpen: false,
+  };
 
   private node: HTMLDivElement = null;
 
@@ -67,7 +72,10 @@ class TransactionEntry extends React.Component<
     this.node.focus();
   }
 
-  componentDidUpdate(prevProps: ITransactionEntryProps) {
+  componentDidUpdate(
+    prevProps: ITransactionEntryProps,
+    prevState: ITransactionEntryState,
+  ) {
     if (prevProps.show !== this.props.show) {
       if (!prevProps.transaction && !!this.props.transaction) {
         const {
@@ -86,6 +94,14 @@ class TransactionEntry extends React.Component<
         });
       }
       this.setState(TransactionEntry.InitialState);
+    }
+
+    if (
+      !prevState.isMetaOpen &&
+      !this.state.isMetaOpen &&
+      this.props.showMeta
+    ) {
+      this.setState({ isMetaOpen: this.props.showMeta });
     }
   }
 
@@ -123,6 +139,8 @@ class TransactionEntry extends React.Component<
     }
     this.handleSubmit(e);
   };
+
+  handleDateClick = date => this.setState({ date, isMetaOpen: false });
 
   handleChange = (key: 'price' | 'description' | 'category' | 'date') => (
     value: any,
@@ -232,7 +250,7 @@ class TransactionEntry extends React.Component<
               />
             </FormGroup>
             <FormGroup>
-              <Calendar />
+              <Calendar handleDateClick={this.handleDateClick} />
             </FormGroup>
           </Collapse>
           <Collapse
