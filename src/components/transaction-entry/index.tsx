@@ -54,7 +54,7 @@ class TransactionEntry extends React.Component<
     category: categories[0].title,
     date: Date.now(),
     description: '',
-    isMetaOpen: true,
+    isMetaOpen: false,
     type: 'outcome',
     price: '',
     isCategoryOpen: false,

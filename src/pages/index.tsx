@@ -1,5 +1,6 @@
 import * as React from 'react';
-import * as FileSaver from 'file-saver';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
 import {
   Container,
@@ -16,7 +17,6 @@ import { IDictionary } from '../types';
 import TransactionEntry, {
   TransactionType,
 } from '../components/transaction-entry';
-import { formatDate } from '../utils/date';
 import TransactionsSummary from '../components/transactions-summary';
 import Header from '../components/header';
 import './styles.scss';
@@ -25,6 +25,14 @@ import history from '../history';
 import { API } from '../utils/request';
 import { byKey } from '../utils/object';
 import TransactionList from '../components/transaction-list';
+import { IState } from 'src/store';
+import {
+  addTransaction,
+  deleteTransaction,
+  toggleTypeTransaction,
+  updateTransaction,
+  fillTransactions,
+} from 'src/store/transactions';
 
 export interface ITransaction {
   _id?: string;
@@ -35,26 +43,31 @@ export interface ITransaction {
   price: number;
 }
 
+export interface IIndexProps {
+  addTransaction: typeof addTransaction;
+  deleteTransaction: typeof deleteTransaction;
+  fillTransactions: typeof fillTransactions;
+  transactions: IDictionary<ITransaction>;
+  toggleTypeTransaction: typeof toggleTypeTransaction;
+  updateTransaction: typeof updateTransaction;
+}
+
 export interface IIndexState {
   editingTransactionId: string;
   exportOpen: boolean;
   height: number;
   transactionActions: string;
-  transactions: IDictionary<ITransaction>;
   showAddTransaction: boolean;
 }
 
-class Index extends React.Component<{}, IIndexState> {
+class Index extends React.Component<IIndexProps, IIndexState> {
   state: IIndexState = {
     editingTransactionId: null,
     exportOpen: false,
     height: 600,
-    transactions: {},
     transactionActions: null,
-    showAddTransaction: true,
+    showAddTransaction: false,
   };
-
-  private fileInput: HTMLInputElement;
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
@@ -68,44 +81,6 @@ class Index extends React.Component<{}, IIndexState> {
 
   handleResize = () => this.setState({ height: window.innerHeight });
 
-  saveToStorage = () => {
-    const { transactions } = this.state;
-    const data = JSON.stringify(transactions);
-    localStorage.setItem('transactions', data);
-  };
-
-  handleExport = e => {
-    e.preventDefault();
-    FileSaver.saveAs(
-      new Blob([JSON.stringify(this.state.transactions)]),
-      `${formatDate(new Date(), 'every-log-%y-%mm-%d_%H-%M.json')}`,
-    );
-  };
-
-  handleImport = e => {
-    if (!e.target.files[0]) {
-      return;
-    }
-
-    const fileReader = new FileReader();
-    fileReader.onloadend = () => {
-      try {
-        this.setState(
-          { transactions: JSON.parse(fileReader.result as string) },
-          this.saveToStorage,
-        );
-        alert('Your data has been imported successfully');
-      } catch (err) {
-        alert(
-          'You need to import a JSON file exported from EveryLog or a JSON file compatible with our format',
-        );
-      }
-      this.fileInput.value = '';
-    };
-
-    fileReader.readAsText(e.target.files[0]);
-  };
-
   handleSubmit = (data: ITransaction) => {
     if (!data.price) {
       return;
@@ -117,78 +92,37 @@ class Index extends React.Component<{}, IIndexState> {
         ...data,
         date: Date.now(),
       }).then(resp => {
-        this.setState(
-          {
-            transactions: {
-              ...this.state.transactions,
-              [resp.data.date]: resp.data,
-            },
-            showAddTransaction: false,
-          },
-          this.sortTransactions,
-        );
+        this.props.addTransaction(resp.data);
+        this.setState({
+          showAddTransaction: false,
+        });
       });
     } else {
-      this.setState(
-        {
-          transactions: {
-            ...this.state.transactions,
-            [this.state.editingTransactionId
-              ? this.state.transactions[this.state.editingTransactionId].date
-              : Date.now()]: {
-              ...data,
-              date: Date.now(),
-            },
-          },
-          showAddTransaction: false,
-        },
-        () => {
-          this.saveToStorage();
-          this.sortTransactions();
-        },
-      );
+      this.props.addTransaction(data);
+      this.setState({
+        showAddTransaction: false,
+      });
     }
   };
 
   handleDelete = (id: string) => () => {
     const authorization = localStorage.getItem('authorization');
     if (authorization) {
-      API.deleteTransaction(this.state.transactions[id]._id);
+      API.deleteTransaction(this.props.transactions[id]._id);
     }
 
-    this.setState(
-      {
-        transactions: Object.keys(this.state.transactions)
-          .filter(key => key !== id)
-          .reduce((tmp, k) => {
-            tmp[k] = this.state.transactions[k];
-            return tmp;
-          }, {}),
-      },
-      this.saveToStorage,
-    );
+    this.props.deleteTransaction(id);
   };
 
   handleTypeToggle = (id: string) => () => {
     const type =
-      this.state.transactions[id].type === 'income' ? 'outcome' : 'income';
+      this.props.transactions[id].type === 'income' ? 'outcome' : 'income';
     const authorization = localStorage.getItem('authorization');
     if (authorization) {
-      API.updateTransaction({ ...this.state.transactions[id], type });
+      API.updateTransaction({ ...this.props.transactions[id], type });
     }
 
-    this.setState(
-      {
-        transactions: {
-          ...this.state.transactions,
-          [id]: {
-            ...this.state.transactions[id],
-            type,
-          },
-        },
-      },
-      this.saveToStorage,
-    );
+    this.props.toggleTypeTransaction(id, type);
   };
 
   handleActionsToggle = (id: string) => () =>
@@ -206,33 +140,22 @@ class Index extends React.Component<{}, IIndexState> {
     const authorization = localStorage.getItem('authorization');
     if (authorization) {
       API.updateTransaction({
-        _id: this.state.transactions[id]._id,
+        _id: this.props.transactions[id]._id,
         ...data,
       }).then(resp => {
-        this.setState({
-          transactions: {
-            ...this.state.transactions,
-            [resp.data.date]: resp.data,
-          },
-          showAddTransaction: false,
-        });
+        this.props.updateTransaction(resp.data, id);
       });
     } else {
-      const transactions = { ...this.state.transactions };
-      if (!!data) {
-        transactions[id] = data;
-      }
-
       this.setState({
         editingTransactionId: null,
         showAddTransaction: false,
-        transactions,
       });
+      this.props.updateTransaction(data, id);
     }
   };
 
   render() {
-    const { transactions } = this.state;
+    const { transactions } = this.props;
     const transactionSummary = Object.keys(transactions).reduce(
       (tmp, key) => {
         tmp[transactions[key].type] += transactions[key].price;
@@ -305,7 +228,7 @@ class Index extends React.Component<{}, IIndexState> {
             }
             transaction={
               this.state.editingTransactionId
-                ? this.state.transactions[this.state.editingTransactionId]
+                ? this.props.transactions[this.state.editingTransactionId]
                 : null
             }
             onUpdate={this.handleUpdate(this.state.editingTransactionId)}
@@ -316,42 +239,33 @@ class Index extends React.Component<{}, IIndexState> {
     );
   }
 
-  private sortTransactions = () => {
-    this.setState({
-      transactions: byKey(
-        Object.keys(this.state.transactions)
-          .map(key => this.state.transactions[key])
-          .sort((a, b) => (a.date < b.date ? 1 : -1)),
-        'date',
-      ),
-    });
-  };
-
   private fetchTransactions = () => {
     const authorization = localStorage.getItem('authorization');
     const isUsingAuth = localStorage.getItem('isUsingAuth');
-    if (isUsingAuth === 'false') {
-      this.setState(
-        {
-          transactions: JSON.parse(
-            localStorage.getItem('transactions') || '{}',
-          ),
-        },
-        this.sortTransactions,
-      );
-    } else if (!authorization) {
+
+    if (isUsingAuth !== 'false' && !authorization) {
       history.push({ pathname: '/login' });
     } else {
       API.fetchTransactions().then(res => {
-        this.setState(
-          {
-            transactions: byKey(res.data.transactions, 'date'),
-          },
-          this.sortTransactions,
-        );
+        this.props.fillTransactions(byKey(res.data.transactions, 'date'));
       });
     }
   };
 }
 
-export default Index;
+export default connect(
+  (state: IState) => ({
+    transactions: state.transactions,
+  }),
+  dispatch =>
+    bindActionCreators(
+      {
+        addTransaction,
+        deleteTransaction,
+        fillTransactions,
+        toggleTypeTransaction,
+        updateTransaction,
+      },
+      dispatch,
+    ),
+)(Index);
