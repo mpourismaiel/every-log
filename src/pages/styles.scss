@@ -10,6 +10,7 @@
 .app {
   .cards {
     .card {
+      background: linear-gradient(135deg, #5f79a7 0%,#5f2264 100%);
       display: flex;
       flex: 1 0 auto;
       margin: 0 10px;
@@ -28,5 +29,10 @@
         font-weight: bold;
       }
     }
+  }
+
+  .transaction-add {
+    background-image: linear-gradient( 135deg, #0fcfaf 10%, #02bff8 100%);
+    border: none;
   }
 }

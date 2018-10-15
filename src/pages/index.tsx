@@ -180,21 +180,25 @@ class Index extends React.Component<IIndexProps, IIndexState> {
               transactionActions={this.state.transactionActions}
               transactions={transactions}
             />
-            <Row className="justify-content-between cards mx-0 mb-2">
+            <Row className="justify-content-between cards  mx-0 mb-2">
               <Card color="secondary" className="border-0">
-                <CardTitle>Income</CardTitle>
+                <Row className="mx-0 justify-content-around">
+                  <CardTitle>Income</CardTitle>
+                  <CardTitle>Outcome</CardTitle>
+                </Row>
                 <CardBody className="text-light">
-                  {transactionSummary.income > 0
-                    ? '+' + prettifyPrice(transactionSummary.income)
-                    : 0}
-                </CardBody>
-              </Card>
-              <Card color="secondary" className="border-0">
-                <CardTitle>Outcome</CardTitle>
-                <CardBody className="text-light">
-                  {transactionSummary.outcome > 0
-                    ? '-' + prettifyPrice(transactionSummary.outcome)
-                    : 0}
+                  <Row className="mx-0 justify-content-around">
+                    <Col className="px-0">
+                      {transactionSummary.income > 0
+                        ? '+' + prettifyPrice(transactionSummary.income)
+                        : 0}
+                    </Col>
+                    <Col className="px-0">
+                      {transactionSummary.outcome > 0
+                        ? '-' + prettifyPrice(transactionSummary.outcome)
+                        : 0}
+                    </Col>
+                  </Row>
                 </CardBody>
               </Card>
             </Row>

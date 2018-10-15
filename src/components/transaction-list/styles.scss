@@ -10,15 +10,14 @@
       height: 2px;
       position: absolute;
       top: calc(50% - 1px);
-      left: 0;
-      background-image: linear-gradient(to right, rgba(#e7466f, 0.9) 50%, rgba(#e7466f, 0) 100%);;
+      left: 0;background-image: linear-gradient( 135deg, #97ABFF 10%, #1235971c 100%);
     }
 
     span {
       z-index: 10;
       background-color: white;
       padding: 0 10px;
-      color: #e7466f;
+      color: #0c808f;
     }
   }
 }

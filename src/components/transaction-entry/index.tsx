@@ -137,9 +137,8 @@ class TransactionEntry extends React.Component<
       value = value.target.value;
     }
 
-    if (key === 'category' && this.state.category === value) {
+    if (key === 'category') {
       this.setState({ isCategoryOpen: false });
-      return false;
     }
 
     this.setState({ [key]: value } as any);

@@ -19,7 +19,7 @@ const TransactionsSummary: React.SFC<ITransactionsSummaryProps> = ({
     <Col className="mt-1 w-100 mb-4 mx-0 pt-4 px-3 transaction-summary">
       <Row className="justify-content-start mx-0">
         <Col className="px-0">
-          <h6 className="date text-dark">
+          <h6 className="date text-muted">
             {formatDate(new Date(), 'Today, %dd, %m %y')}
           </h6>
           <h5 className="text-dark">Total balance:</h5>
