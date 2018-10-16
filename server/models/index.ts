@@ -3,7 +3,10 @@ import * as mongoose from 'mongoose';
 import TransactionModel from './transaction';
 import UserModel from './user';
 
-const mongoDB = 'mongodb://127.0.0.1:27017/everylog';
+const mongoDB = `mongodb://${process.env.MONGODB_USERNAME &&
+  `${process.env.MONGODB_USERNAME}:${
+    process.env.MONGODB_PASSWORD
+  }@`}127.0.0.1:27017/everylog`;
 mongoose.connect(
   mongoDB,
   { useNewUrlParser: true },
