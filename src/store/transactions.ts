@@ -77,13 +77,17 @@ const transactions = createReducer<ITransactionsState>(initialState, {
     state,
     payload,
     { editingTransactionId }: { editingTransactionId?: string | number } = {},
-  ) => ({
-    ...state,
-    [editingTransactionId ? state[editingTransactionId].date : Date.now()]: {
-      ...payload,
-      date: payload.date || Date.now(),
-    },
-  }),
+  ) => {
+    const id = `${Math.random() * 10000000000}`;
+    return {
+      ...state,
+      [id]: {
+        _id: id,
+        ...payload,
+        date: payload.date || Date.now(),
+      },
+    };
+  },
   [UPDATE_TRANSACTION]: (
     state,
     { transaction, id }: { transaction: IDBTransaction; id: string },
@@ -105,9 +109,17 @@ const transactions = createReducer<ITransactionsState>(initialState, {
       type,
     },
   }),
-  [REHYDRATE]: (state, store: IState = {} as any) => ({
-    ...store.transactions,
-  }),
+  [REHYDRATE]: (state, store: IState = {} as any) =>
+    Object.keys(store.transactions)
+      .map(key => store.transactions[key])
+      .reduce((tmp, transaction: ITransaction) => {
+        if (!transaction._id) {
+          transaction._id = `${Math.random() * 10000000000}`;
+        }
+
+        tmp[transaction._id] = transaction;
+        return tmp;
+      }, {}),
   [FILL_TRASNASCTIONS]: (state, payload) => ({
     ...payload,
   }),
@@ -116,7 +128,7 @@ const transactions = createReducer<ITransactionsState>(initialState, {
       Object.keys(state)
         .map(key => state[key])
         .sort((a, b) => (a.date < b.date ? 1 : -1)),
-      'date',
+      '_id',
     ),
 });
 

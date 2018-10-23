@@ -21,9 +21,9 @@ import TransactionsSummary from '../components/transactions-summary';
 import Header from '../components/header';
 import './styles.scss';
 import { prettifyPrice } from '../utils/string';
-import history from '../history';
-import { API } from '../utils/request';
-import { byKey } from '../utils/object';
+// import history from '../history';
+// import { API } from '../utils/request';
+// import { byKey } from '../utils/object';
 import TransactionList from '../components/transaction-list';
 import { IState } from 'src/store';
 import {
@@ -73,7 +73,7 @@ class Index extends React.Component<IIndexProps, IIndexState> {
 
   componentDidMount() {
     window.addEventListener('resize', this.handleResize);
-    this.fetchTransactions();
+    // this.fetchTransactions();
     this.handleResize();
   }
 
@@ -88,33 +88,14 @@ class Index extends React.Component<IIndexProps, IIndexState> {
       return;
     }
 
-    const authorization = localStorage.getItem('authorization');
-    if (authorization) {
-      API.createTransaction({
-        ...data,
-        date: Date.now(),
-      }).then(resp => {
-        this.props.addTransaction(resp.data);
-        this.setState({
-          showAddTransaction: false,
-          isEditingMeta: false,
-        });
-      });
-    } else {
-      this.props.addTransaction(data);
-      this.setState({
-        showAddTransaction: false,
-        isEditingMeta: false,
-      });
-    }
+    this.props.addTransaction(data);
+    this.setState({
+      showAddTransaction: false,
+      isEditingMeta: false,
+    });
   };
 
   handleDelete = (id: string) => () => {
-    const authorization = localStorage.getItem('authorization');
-    if (authorization) {
-      API.deleteTransaction(this.props.transactions[id]._id);
-    }
-
     this.props.deleteTransaction(id);
   };
 
@@ -129,11 +110,6 @@ class Index extends React.Component<IIndexProps, IIndexState> {
   handleTypeToggle = (id: string) => () => {
     const type =
       this.props.transactions[id].type === 'income' ? 'outcome' : 'income';
-    const authorization = localStorage.getItem('authorization');
-    if (authorization) {
-      API.updateTransaction({ ...this.props.transactions[id], type });
-    }
-
     this.props.toggleTypeTransaction(id, type);
   };
 
@@ -149,22 +125,12 @@ class Index extends React.Component<IIndexProps, IIndexState> {
       return;
     }
 
-    const authorization = localStorage.getItem('authorization');
-    if (authorization) {
-      API.updateTransaction({
-        _id: this.props.transactions[id]._id,
-        ...data,
-      }).then(resp => {
-        this.props.updateTransaction(resp.data, id);
-      });
-    } else {
-      this.setState({
-        editingTransactionId: null,
-        showAddTransaction: false,
-        isEditingMeta: false,
-      });
-      this.props.updateTransaction(data, id);
-    }
+    this.setState({
+      editingTransactionId: null,
+      showAddTransaction: false,
+      isEditingMeta: false,
+    });
+    this.props.updateTransaction(data, id);
   };
 
   render() {
@@ -258,18 +224,19 @@ class Index extends React.Component<IIndexProps, IIndexState> {
     );
   }
 
-  private fetchTransactions = () => {
-    const authorization = localStorage.getItem('authorization');
-    const isUsingAuth = localStorage.getItem('isUsingAuth');
+  // Make use of this part of code when you revive the server code
+  // private fetchTransactions = () => {
+  //   const authorization = localStorage.getItem('authorization');
+  //   const isUsingAuth = localStorage.getItem('isUsingAuth');
 
-    if (isUsingAuth !== 'false' && !authorization) {
-      history.push({ pathname: '/login' });
-    } else {
-      API.fetchTransactions().then(res => {
-        this.props.fillTransactions(byKey(res.data.transactions, 'date'));
-      });
-    }
-  };
+  //   if (isUsingAuth !== 'false' && !authorization) {
+  //     history.push({ pathname: '/login' });
+  //   } else {
+  //     API.fetchTransactions().then(res => {
+  //       this.props.fillTransactions(byKey(res.data.transactions, 'date'));
+  //     });
+  //   }
+  // };
 }
 
 export default connect(

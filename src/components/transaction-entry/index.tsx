@@ -111,9 +111,10 @@ class TransactionEntry extends React.Component<
       return this.handleUpdate();
     }
 
-    const { category, description, type, price } = this.state;
+    const { category, date, description, type, price } = this.state;
     this.props.onSubmit({
       category,
+      date: parseInt(date.toString(), 10),
       description,
       type,
       price: parseInt(price.toString().replace(/,/g, ''), 10),
